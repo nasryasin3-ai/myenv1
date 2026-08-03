@@ -25,7 +25,7 @@ if not DEBUG and not SECRET_KEY:
 if not SECRET_KEY:
     SECRET_KEY = 'django-insecure-your-key-here'
 
-_default_hosts = 'flownest-production-0ca1.up.railway.app,localhost,127.0.0.1'
+_default_hosts = '*.railway.app,*.up.railway.app,localhost,127.0.0.1,*'
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=_default_hosts, cast=lambda v: [s.strip() for s in v.split(',')])
 
 
