@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% comment %}
+  Registration page — FlowNest ERP
+  Note: The request for bank card information has been removed (CVV) For security and user trust reasons.
+  Payment is made through secure channels after direct communication with the team.
+{% endcomment %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[85vh] py-8">
+    <div class="w-full max-w-2xl bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 md:p-10">
+        
+        <!-- Progress Steps -->
+        <div class="flex items-center justify-center gap-2 mb-6">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-black">1</div>
+                <span class="text-sm font-bold text-white">Create account</span>
+            </div>
+            <div class="h-px w-10 bg-white/10"></div>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 text-xs font-black">2</div>
+                <span class="text-sm font-bold text-gray-500">Activate the company</span>
+            </div>
+        </div>
+
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-2">
+                <i class="fas fa-user-plus text-primary mr-2"></i> Create a new account
+            </h2>
+            <p class="text-gray-400">Join FlowNest ERP And start your free trial for a period 7 Whole days — <span class="text-emerald-400 font-bold">Without a bank card</span></p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if error_message %}
+            <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/40 rounded-2xl px-4 py-3 text-red-300">
+                <i class="fas fa-exclamation-triangle text-red-400 flex-shrink-0"></i>
+                <span class="text-sm">{{ error_message }}</span>
+            </div>
+            {% endif %}
+
+            {% if form.errors %}
+            <div class="bg-red-500/10 border border-red-500/40 rounded-2xl px-4 py-3 text-red-300 space-y-1">
+                <div class="flex items-center gap-3 mb-1">
+                    <i class="fas fa-times-circle text-red-400 flex-shrink-0"></i>
+                    <span class="text-sm font-bold">Please correct the following errors:</span>
+                </div>
+                <ul class="list-disc list-inside text-xs">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- User Identity Section -->
+                <div class="space-y-2 col-span-1 md:col-span-2">
+                    <label class="block text-sm font-black text-gray-300">Full name</label>
+                    <input type="text" id="full_name_input" name="full_name" required placeholder="Enter your full name here" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                </div>
+
+                <!-- Django Native Fields (Username will be auto-filled) -->
+                <div class="space-y-2 col-span-1 md:col-span-2 hidden">
+                    <label class="block text-sm font-medium text-gray-300">Username (for login only)</label>
+                    {{ form.username }}
+                </div>
+                
+                <div class="space-y-2 col-span-1 md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-300">Password</label>
+                    {{ form.password }}
+                </div>
+
+                {% for field in form %}
+                    {% if field.name != 'username' and field.name != 'password' %}
+                    <div class="space-y-2 col-span-1 md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-300">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">Nature of account (role)</label>
+                    <select id="role_select" name="role" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" required onchange="toggleOwnerFields()">
+                        <option value="owner" {% if request.POST.role == "owner" %}selected{% endif %}>Owner (new company registration)</option>
+                        <option value="manager" {% if request.POST.role == "manager" %}selected{% endif %}>Administration Manager</option>
+                        <option value="engineer" {% if request.POST.role == "engineer" %}selected{% endif %}>Employee/Engineer</option>
+                    </select>
+                </div>
+
+                <div id="sector_div" class="space-y-2 hidden">
+                    <label class="block text-sm font-medium text-gray-300">Company sector (Enterprise Sector)</label>
+                    <select name="sector" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                        <option value="corporate">Corporate/commercial (Corporate)</option>
+                        <option value="education">Educational / schools / universities (Education)</option>
+                        <option value="medical">Medical / Hospitals / Clinics (Medical)</option>
+                        <option value="construction">Construction/real estate (Real Estate / Construction)</option>
+                    </select>
+                </div>
+
+                <div id="company_name_div" class="space-y-2 col-span-1 md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-300">Company name</label>
+                    <input type="text" list="existing-companies" id="company_input" name="company_name" value="{{ request.POST.company_name|default:'' }}" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Choose from the list or type the company name" required autocomplete="off" onchange="loadDepartments()" oninput="loadDepartments()">
+                    <datalist id="existing-companies">
+                        {% for comp in existing_companies %}
+                            {% if comp %}
+                            <option value="{{ comp }}">
+                            {% endif %}
+                        {% endfor %}
+                    </datalist>
+                </div>
+
+                <div id="department_div" class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">The department you work for (Department)</label>
+                    <select name="department" id="department_select" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                        <option value="">Please select or type the company first for the sections to appear...</option>
+                    </select>
+                </div>
+
+                <!-- New: Owner-only fields -->
+                <div id="owner_details_div" class="space-y-4 col-span-1 md:col-span-2 hidden">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-300">Company field of work/specialization</label>
+                        <input type="text" name="industry" value="{{ request.POST.industry|default:'' }}" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Example: furniture manufacturing, clothing trade, information technology...">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-300">A brief overview of the company</label>
+                        <textarea name="company_description" rows="3" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Write a brief description of the company's activity...">{{ request.POST.company_description|default:'' }}</textarea>
+                    </div>
+                    
+                    <!-- New: Department Picker for Owners -->
+                    <div id="owner_depts_div" class="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/5 animate-fade-in">
+                        <label class="block text-sm font-bold text-indigo-300 mb-2">Identify the company's departments (Departments Selection)</label>
+                        <p class="text-[10px] text-gray-500 mb-3">Choose the departments you want to activate for your company. Chat rooms and workspaces will be created for each department you choose.</p>
+                        <div id="depts_checklist" class="grid grid-cols-2 gap-3">
+                            <!-- Dynamic checkboxes go here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="plan_div" class="space-y-2 col-span-1 md:col-span-2 hidden">
+                    <label class="block text-sm font-medium text-gray-300">The company's subscription package</label>
+                    <select name="plan" id="plan_select" onchange="toggleOwnerFields()" class="w-full bg-black/30 border border-indigo-500/50 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                        <option value="free" {% if request.POST.plan == "free" %}selected{% endif %}>Free (trial period 7 days)</option>
+                        <option value="1_month" {% if request.POST.plan == "1_month" %}selected{% endif %}>A month (3000 J.M)</option>
+                        <option value="3_months" {% if request.POST.plan == "3_months" %}selected{% endif %}>Three months (8500 J.M)</option>
+                        <option value="1_year" {% if request.POST.plan == "1_year" %}selected{% endif %}>year (30000 J.M)</option>
+                    </select>
+                </div>
+
+                <!-- Payment Info: Safe Contact-Based Approach -->
+                <div id="payment_info_div" class="space-y-3 col-span-1 md:col-span-2 hidden bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-2xl animate-fade-in">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl flex-shrink-0">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-emerald-300 font-bold text-sm mb-1">💳 Pay after free trial</h3>
+                            <p class="text-gray-400 text-xs leading-relaxed">
+                                We do not require any bank details now. Start for free for a period <strong class="text-white">7 Whole days</strong>, 
+                                Our team will then contact you to complete the subscription via a secure and approved payment gateway.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="col-span-1 md:col-span-2 flex flex-wrap items-center justify-center gap-4 py-4 border-t border-white/5 mt-2">
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-lock text-emerald-500"></i> Encrypted and secure data
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-credit-card text-indigo-400"></i> Without a bank card
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-times-circle text-pink-400"></i> Cancel at any time
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <i class="fas fa-headset text-amber-400"></i> Specialized Arabic support
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02] mt-2">
+                <i class="fas fa-rocket ml-2"></i> Create an account and start the free trial
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm pt-6 border-t border-white/10">
+            <p class="text-gray-400">
+                Already have an account? 
+                <a href="{% url 'login' %}" class="font-bold text-primary hover:text-indigo-400 hover:underline transition-colors">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick style override for django form fields to match Tailwind -->
+<style>
+    form input:not([type="hidden"]) {
+        width: 100%; 
+        padding: 0.75rem 1rem; 
+        background-color: rgba(0,0,0,0.3); 
+        border: 1px solid rgba(255,255,255,0.1); 
+        color: white; 
+        border-radius: 0.75rem;
+        transition: all 0.3s;
+    }
+    form input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #6366f1;
+    }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<script>
+    function loadDepartments() {
+        const companyInput = document.getElementById('company_input');
+        const deptSelect = document.getElementById('department_select');
+        if (!companyInput || !deptSelect) return;
+        
+        const companyName = companyInput.value;
+        if (!companyName) return;
+
+        fetch(`/api/get-departments/?company_name=${encodeURIComponent(companyName)}`)
+            .then(response => response.json())
+            .then(data => {
+                deptSelect.innerHTML = '<option value="">Select Administration...</option>';
+                data.departments.forEach(dept => {
+                    const opt = document.createElement('option');
+                    opt.value = dept.id;
+                    opt.textContent = dept.name;
+                    deptSelect.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error("Error loading departments:", err);
+            });
+    }
+
+    const sectorDepts = {{ sector_depts|safe }};
+
+    function updateDeptsChecklist() {
+        const sector = document.querySelector('select[name="sector"]').value;
+        const checklist = document.getElementById('depts_checklist');
+        const depts = sectorDepts[sector] || [];
+        
+        checklist.innerHTML = '';
+        depts.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5 hover:border-primary/30 transition-all cursor-pointer';
+            div.innerHTML = `
+                <input type="checkbox" name="selected_depts" value="${d}" id="dept_${d}" checked class="checkbox checkbox-primary checkbox-xs">
+                <label for="dept_${d}" class="text-xs text-gray-300 cursor-pointer flex-1">${d}</label>
+            `;
+            checklist.appendChild(div);
+        });
+    }
+
+    function toggleOwnerFields() {
+        const roleEl = document.getElementById('role_select');
+        if (!roleEl) return;
+        const role = roleEl.value;
+        const planDiv = document.getElementById('plan_div');
+        const planSelect = document.getElementById('plan_select');
+        const paymentInfoDiv = document.getElementById('payment_info_div'); // Name changed from payment_details_div
+        const ownerDetailsDiv = document.getElementById('owner_details_div');
+        const companyDiv = document.getElementById('company_name_div');
+        const departmentDiv = document.getElementById('department_div');
+        const sectorDiv = document.getElementById('sector_div');
+        const companyInput = document.getElementById('company_input');
+        const departmentSelect = document.getElementById('department_select');
+
+        if (role === 'owner') {
+            planDiv.classList.remove('hidden');
+            ownerDetailsDiv.classList.remove('hidden');
+            sectorDiv.classList.remove('hidden');
+            departmentDiv.classList.add('hidden');
+            updateDeptsChecklist();
+            
+            // Show payment info message for paid plans (no CVV collected)
+            if (paymentInfoDiv) {
+                if (planSelect && planSelect.value !== 'free') {
+                    paymentInfoDiv.classList.remove('hidden');
+                } else {
+                    paymentInfoDiv.classList.add('hidden');
+                }
+            }
+        } else {
+            planDiv.classList.add('hidden');
+            ownerDetailsDiv.classList.add('hidden');
+            sectorDiv.classList.add('hidden');
+            if (paymentInfoDiv) paymentInfoDiv.classList.add('hidden');
+            departmentDiv.classList.remove('hidden');
+        }
+    }
+
+    // --- AUTO USERNAME GENERATION ---
+    const fullNameInput = document.getElementById('full_name_input');
+    if (fullNameInput) {
+        fullNameInput.addEventListener('input', function() {
+            const fullName = this.value;
+            // Clean name: lower case, replace spaces with underscores
+            let safeUsername = fullName.toLowerCase().trim()
+                .replace(/\s+/g, '_')
+                .replace(/[^\w\s_]/g, '');
+                
+            const usernameInput = document.querySelector('input[name="username"]');
+            if (usernameInput) {
+                usernameInput.value = safeUsername;
+            }
+        });
+    }
+
+    // Bind sector change to update checklist
+    const sectorEl = document.querySelector('select[name="sector"]');
+    if (sectorEl) sectorEl.addEventListener('change', updateDeptsChecklist);
+
+    // Initialize state
+    document.addEventListener("DOMContentLoaded", () => {
+        toggleOwnerFields();
+        loadDepartments();
+    });
+</script>
+{% endblock %}

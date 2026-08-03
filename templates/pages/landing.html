@@ -1,0 +1,2232 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowNest ERP | Intelligent business management system for Arab companies</title>
+    <meta name="description"
+        content="FlowNest ERP - System SaaS Integrated Arabic powered by artificial intelligence. Financial Management, Assistant RAG Smart, isolated workspaces for commercial, educational, medical and real estate companies.">
+    <meta name="keywords" content="ERP Arabic, management system, artificial intelligence, SaaS, Accounting, resource management">
+    <meta property="og:title" content="FlowNest ERP - Intelligent management system for Arab companies">
+    <meta property="og:description" content="System ERP An Arab cloud integrated with artificial intelligence to increase the efficiency of your company">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* ════════════════════════════════════════
+           DESIGN SYSTEM — TOKENS
+        ════════════════════════════════════════ */
+        :root {
+            --bg-0: #08090f;
+            --bg-1: #0d0f1c;
+            --bg-2: #12152b;
+            --bg-glass: rgba(255, 255, 255, 0.04);
+            --bg-glass-hover: rgba(255, 255, 255, 0.07);
+
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+
+            --text-1: #f8fafc;
+            --text-2: #cbd5e1;
+            --text-3: #64748b;
+            --text-4: #334155;
+
+            --border: rgba(255, 255, 255, 0.07);
+            --border-strong: rgba(255, 255, 255, 0.12);
+
+            --glow-primary: rgba(99, 102, 241, 0.25);
+            --glow-accent: rgba(236, 72, 153, 0.2);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: var(--bg-0);
+            color: var(--text-1);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ─── Background Ambient ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 10% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 50% at 90% 80%, rgba(236, 72, 153, 0.10) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 40% at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 45%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ════════════════════════════════════════
+           UTILITIES
+        ════════════════════════════════════════ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-text-green {
+            background: linear-gradient(135deg, #34d399, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 6px 16px;
+            border-radius: 99px;
+            margin-bottom: 20px;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            transition: all 0.35s ease;
+        }
+
+        .glass-card:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-strong);
+            transform: translateY(-4px);
+        }
+
+        /* ════════════════════════════════════════
+           NAVBAR
+        ════════════════════════════════════════ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0 24px;
+            transition: all 0.4s ease;
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 16px auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            background: rgba(13, 15, 28, 0.7);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .navbar.scrolled .navbar-inner {
+            background: rgba(8, 9, 15, 0.92);
+            margin-top: 0;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: var(--text-3);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: all 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-1);
+            background: var(--bg-glass);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-ghost {
+            color: var(--text-2);
+            background: transparent;
+        }
+
+        .btn-ghost:hover {
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 20px var(--glow-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--glow-primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-1);
+            border: 1px solid var(--border-strong);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-glass);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        .btn-hero {
+            padding: 16px 36px;
+            font-size: 1.05rem;
+            border-radius: 14px;
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-emerald:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+        }
+
+        /* ════════════════════════════════════════
+           HERO SECTION
+        ════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 99px;
+            padding: 8px 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease both;
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 5.2rem);
+            font-weight: 900;
+            line-height: 1.1;
+            max-width: 900px;
+            margin: 0 auto 24px;
+            animation: fadeInUp 0.9s ease 0.1s both;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-2);
+            max-width: 640px;
+            margin: 0 auto 48px;
+            line-height: 1.75;
+            font-weight: 400;
+            animation: fadeInUp 0.9s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.9s ease 0.3s both;
+        }
+
+        /* ─── Animated Dashboard Mockup ─── */
+        .hero-mockup {
+            margin-top: 72px;
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            animation: floatUp 1.2s ease 0.4s both;
+        }
+
+        .mockup-shell {
+            background: linear-gradient(135deg, rgba(30, 32, 60, 0.9), rgba(15, 17, 30, 0.95));
+            border: 1px solid var(--border-strong);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(99, 102, 241, 0.15),
+                0 40px 120px -20px rgba(0, 0, 0, 0.8),
+                0 0 80px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .mockup-bar {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-content {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .mockup-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .mockup-card-label {
+            font-size: 0.65rem;
+            color: var(--text-3);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .mockup-card-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .mockup-bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            height: 40px;
+            margin-top: 12px;
+        }
+
+        .mockup-bar-item {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+            opacity: 0.6;
+            animation: growBar 1.5s ease both;
+        }
+
+        @keyframes growBar {
+            from {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+
+            to {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+        }
+
+        .mockup-glow {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 80px;
+            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.3), transparent 70%);
+            filter: blur(30px);
+        }
+
+        /* ════════════════════════════════════════
+           STATS BAR
+        ════════════════════════════════════════ */
+        .stats-bar {
+            padding: 48px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            background: var(--bg-1);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-3);
+            font-weight: 600;
+        }
+
+        /* ════════════════════════════════════════
+           FEATURES SECTION
+        ════════════════════════════════════════ */
+        .features {
+            padding: 100px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            font-size: 1.05rem;
+            color: var(--text-3);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            padding: 36px 28px;
+            border-radius: 24px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-strong);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-3);
+            line-height: 1.7;
+        }
+
+        /* Feature card variants */
+        .feat-ai .feature-icon-wrap {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+        }
+
+        .feat-financial .feature-icon-wrap {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .feat-workspace .feature-icon-wrap {
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--accent);
+        }
+
+        .feat-team .feature-icon-wrap {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--amber);
+        }
+
+        .feat-reports .feature-icon-wrap {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--secondary);
+        }
+
+        .feat-multitenant .feature-icon-wrap {
+            background: rgba(6, 182, 212, 0.15);
+            color: #22d3ee;
+        }
+
+        /* ════════════════════════════════════════
+           HOW IT WORKS
+        ════════════════════════════════════════ */
+        .how-it-works {
+            padding: 80px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.4;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 32px 20px;
+        }
+
+        .step-num {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 30px var(--glow-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-card h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .step-card p {
+            font-size: 0.88rem;
+            color: var(--text-3);
+            line-height: 1.65;
+        }
+
+        /* ════════════════════════════════════════
+           SECTORS
+        ════════════════════════════════════════ */
+        .sectors {
+            padding: 80px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sectors-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .sector-card {
+            border-radius: 24px;
+            padding: 36px 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+            background: var(--bg-glass);
+            transition: all 0.35s ease;
+            cursor: default;
+        }
+
+        .sector-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-strong);
+        }
+
+        .sector-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .sector-card h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .sector-card p {
+            font-size: 0.82rem;
+            color: var(--text-3);
+            line-height: 1.6;
+        }
+
+        .sector-corporate {
+            border-top: 2px solid var(--primary);
+        }
+
+        .sector-education {
+            border-top: 2px solid var(--amber);
+        }
+
+        .sector-medical {
+            border-top: 2px solid #f43f5e;
+        }
+
+        .sector-real {
+            border-top: 2px solid var(--emerald);
+        }
+
+        /* ════════════════════════════════════════
+           PRICING
+        ════════════════════════════════════════ */
+        .pricing {
+            padding: 100px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 980px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .pricing-card {
+            border-radius: 28px;
+            padding: 44px 32px;
+            border: 1px solid var(--border);
+            background: var(--bg-1);
+            position: relative;
+            transition: all 0.35s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-strong);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.12);
+            transform: scale(1.03);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.03) translateY(-6px);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 5px 18px;
+            border-radius: 99px;
+            white-space: nowrap;
+        }
+
+        .pricing-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-3);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .pricing-price {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            color: var(--text-3);
+            font-weight: 600;
+        }
+
+        .pricing-period {
+            font-size: 0.82rem;
+            color: var(--text-3);
+            margin-bottom: 32px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 36px;
+            space-y: 12px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-2);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li i {
+            color: var(--emerald);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            display: flex;
+            justify-content: center;
+        }
+
+        .pricing-cta a {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 28px;
+        }
+
+        /* ════════════════════════════════════════
+           TRUST SECTION
+        ════════════════════════════════════════ */
+        .trust {
+            padding: 80px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .trust-card {
+            text-align: center;
+            padding: 28px 20px;
+            border-radius: 20px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+        }
+
+        .trust-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin: 0 auto 16px;
+        }
+
+        .trust-card h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .trust-card p {
+            font-size: 0.8rem;
+            color: var(--text-3);
+            line-height: 1.5;
+        }
+
+        /* ════════════════════════════════════════
+           CTA SECTION
+        ════════════════════════════════════════ */
+        .cta-section {
+            padding: 100px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.06));
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 36px;
+            padding: 80px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(99, 102, 241, 0.15), transparent 60%);
+            pointer-events: none;
+        }
+
+        .cta-inner h2 {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .cta-inner p {
+            font-size: 1.1rem;
+            color: var(--text-2);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .free-note {
+            margin-top: 20px;
+            font-size: 0.82rem;
+            color: var(--text-3);
+        }
+
+        .free-note i {
+            color: var(--emerald);
+            margin-left: 4px;
+        }
+
+        /* ════════════════════════════════════════
+           FOOTER
+        ════════════════════════════════════════ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 48px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-3);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: color 0.25s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-1);
+        }
+
+        .footer-bottom {
+            width: 100%;
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-4);
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ════════════════════════════════════════
+           ANIMATIONS
+        ════════════════════════════════════════ */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(0.9);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* ════════════════════════════════════════
+           RESPONSIVE
+        ════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sectors-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .trust-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .navbar-inner {
+                padding: 12px 20px;
+                margin-top: 12px;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid::before {
+                display: none;
+            }
+
+            .sectors-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cta-inner {
+                padding: 48px 24px;
+            }
+
+            .mockup-content {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-hero {
+                width: 100%;
+                max-width: 320px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-actions .btn-ghost {
+                display: none;
+            }
+
+            .sectors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-top {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        /* ─── divider ─── */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ════════════════════════════════════════
+           VIDEO DEMO SECTION
+        ════════════════════════════════════════ */
+        .video-demo {
+            padding: 80px 24px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-wrapper {
+            position: relative;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .video-glow {
+            position: absolute;
+            inset: -40px;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%,
+                    rgba(99, 102, 241, 0.18),
+                    rgba(236, 72, 153, 0.1) 50%,
+                    transparent 75%);
+            filter: blur(40px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .video-container {
+            position: relative;
+            z-index: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 40px 120px -20px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(99, 102, 241, 0.12);
+            background: var(--bg-1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .video-container:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 0 0 1px rgba(99, 102, 241, 0.3),
+                0 50px 130px -20px rgba(0, 0, 0, 0.8),
+                0 0 80px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Fake browser chrome bar */
+        .video-chrome-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .chrome-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chrome-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .chrome-url {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 5px 14px;
+            font-size: 0.75rem;
+            color: var(--text-3);
+            font-family: 'Inter', monospace;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .chrome-actions {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* Video player */
+        .video-player-wrap {
+            position: relative;
+            cursor: pointer;
+            background: #0a0b14;
+            min-height: 200px;
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(8, 9, 15, 0.55);
+            backdrop-filter: blur(4px);
+            transition: opacity 0.35s ease;
+            z-index: 10;
+        }
+
+        .play-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .play-btn-outer {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.15);
+            border: 2px solid rgba(99, 102, 241, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-ring 2.5s ease infinite;
+            transition: transform 0.3s;
+        }
+
+        .play-overlay:hover .play-btn-outer {
+            transform: scale(1.1);
+        }
+
+        .play-btn-inner {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .play-btn-inner i {
+            margin-right: -3px;
+        }
+
+        .play-overlay p {
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(99, 102, 241, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        /* Video badges */
+        .video-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .video-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            padding: 8px 18px;
+            font-size: 0.82rem;
+            color: var(--text-2);
+            font-weight: 600;
+            transition: all 0.25s;
+        }
+
+        .video-badge:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-strong);
+        }
+
+        @media (max-width: 768px) {
+            .video-badges {
+                gap: 8px;
+            }
+
+            .video-badge {
+                font-size: 0.75rem;
+                padding: 6px 14px;
+            }
+
+            .play-btn-outer {
+                width: 70px;
+                height: 70px;
+            }
+
+            .play-btn-inner {
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+            }
+        }
+
+        /* ════════════════════════════════════════
+           WHATSAPP FLOATING BUTTON
+        ════════════════════════════════════════ */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px; /* Right for Arabic RTL, though left can work too. Let's use right. Wait, RTL usually puts main actions bottom-left. Let's stick to bottom-left to not block scrollbar. */
+            left: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 32px;
+            box-shadow: 0px 4px 20px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: float-wa 3s ease-in-out infinite;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #20ba56;
+            transform: scale(1.1);
+            color: white;
+            box-shadow: 0px 6px 25px rgba(37, 211, 102, 0.6);
+        }
+
+        @keyframes float-wa {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════ -->
+    <nav class="navbar" id="main-nav">
+        <div class="navbar-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fas fa-infinity"></i></div>
+                <span class="logo-text">FlowNest</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#sectors">sectors</a>
+                <a href="#pricing">Prices</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#demo" style="color:var(--primary-light); display:flex; align-items:center; gap:6px;">
+                    <span
+                        style="width:7px;height:7px;background:#10b981;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+                    Demo
+                </a>
+            </div>
+
+
+            <div class="nav-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary">
+                    <i class="fas fa-tachometer-alt"></i> Control panel
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-ghost">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> Try for free
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span></span>
+            The first in Arabic — ERP Built with artificial intelligence
+        </div>
+
+        <h1>
+            Manage your company smartly with<br>
+            <span class="gradient-text">FlowNest ERP</span>
+        </h1>
+
+        <p>
+            System SaaS An integrated Arabic platform that combines an advanced financial control panel and an artificial intelligence assistant (RAG) Isolated work spaces for each department —
+            Everything you need in one platform.
+        </p>
+
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-emerald btn-hero">
+                <i class="fas fa-tachometer-alt"></i> Go to control panel
+            </a>
+            {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary btn-hero">
+                <i class="fas fa-rocket"></i> Start your free trial — 7 days
+            </a>
+            <a href="#how-it-works" class="btn btn-outline btn-hero">
+                <i class="fas fa-play-circle"></i> See how it works
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Dashboard Mockup -->
+        <div class="hero-mockup float-anim">
+            <div class="mockup-shell">
+                <div class="mockup-bar">
+                    <div class="mockup-dot" style="background:#ff5f57"></div>
+                    <div class="mockup-dot" style="background:#febc2e"></div>
+                    <div class="mockup-dot" style="background:#28c840"></div>
+                    <div
+                        style="flex:1; height:24px; background:rgba(255,255,255,0.04); border-radius:6px; margin-right:12px;">
+                    </div>
+                    <div style="width:80px; height:24px; background:rgba(99,102,241,0.2); border-radius:6px;"></div>
+                </div>
+                <div class="mockup-content">
+                    <div class="mockup-card">
+                        <div class="mockup-card-label">Total revenue</div>
+                        <div class="mockup-card-value gradient-text-green">2.4M</div>
+                        <div style="font-size:0.72rem; color:#10b981;">↑ 18.4% This month</div>
+                        <div class="mockup-bar-chart">
+                            <div class="mockup-bar-item" style="height:40%; animation-delay:0.1s"></div>
+                            <div class="mockup-bar-item" style="height:65%; animation-delay:0.15s"></div>
+                            <div class="mockup-bar-item" style="height:50%; animation-delay:0.2s"></div>
+                            <div class="mockup-bar-item" style="height:80%; animation-delay:0.25s"></div>
+                            <div class="mockup-bar-item" style="height:70%; animation-delay:0.3s"></div>
+                            <div class="mockup-bar-item" style="height:90%; animation-delay:0.35s"></div>
+                            <div class="mockup-bar-item" style="height:100%; animation-delay:0.4s"></div>
+                        </div>
+                    </div>
+                    <div class="mockup-card">
+                        <div class="mockup-card-label">Net profit</div>
+                        <div class="mockup-card-value"
+                            style="background:linear-gradient(135deg,#818cf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+                            940K</div>
+                        <div style="font-size:0.72rem; color:#818cf8;">Profit margin: 39%</div>
+                        <div
+                            style="height:8px; background:rgba(255,255,255,0.05); border-radius:99px; margin-top:16px; overflow:hidden;">
+                            <div
+                                style="width:39%; height:100%; background:linear-gradient(90deg,#6366f1,#a78bfa); border-radius:99px; animation:growBar 1.5s ease 0.5s both;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mockup-card">
+                        <div class="mockup-card-label">Smart assistant</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:8px; margin-top:4px;">🤖 How to perform
+                            Finance this month?</div>
+                        <div
+                            style="background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:8px; padding:10px; font-size:0.72rem; color:#c7d2fe; line-height:1.5;">
+                            Revenue increased by 18% compared to last month. Expenses are within normal limits. ✅</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-glow"></div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+     STATS BAR
+════════════════════════════════════════ -->
+    <div class="stats-bar">
+        <div class="stats-grid container">
+            <div class="stat-item">
+                <div class="stat-number gradient-text">4+</div>
+                <div class="stat-label">Supported sectors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" style="color:#34d399;">AI</div>
+                <div class="stat-label">Built-in smart assistant</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number gradient-text">7</div>
+                <div class="stat-label">Free days without a card</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" style="color:#f59e0b;">Multi</div>
+                <div class="stat-label">Tenant Architecture</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- ════════════════════════════════════════
+         TRUSTED BY (SOCIAL PROOF)
+    ════════════════════════════════════════ -->
+    <section class="trusted-by" style="padding: 20px 0 60px; text-align: center; opacity: 0.9;">
+        <div class="container">
+            <p style="font-size: 0.9rem; color: var(--text-2); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Trusted by more than 50+ A leading company and institution</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 45px; flex-wrap: wrap; filter: grayscale(100%) opacity(0.5); transition: all 0.3s;" onmouseover="this.style.filter='grayscale(0%) opacity(1)'" onmouseout="this.style.filter='grayscale(100%) opacity(0.5)'">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif;"><i class="fas fa-building" style="color:var(--primary); margin-left:8px;"></i>TechVision</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif;"><i class="fas fa-globe" style="color:#3b82f6; margin-left:8px;"></i>GlobalTrade</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif;"><i class="fas fa-chart-pie" style="color:#10b981; margin-left:8px;"></i>AlphaFinance</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif;"><i class="fas fa-truck" style="color:#f59e0b; margin-left:8px;"></i>SmartLogistics</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif;"><i class="fas fa-shopping-cart" style="color:#ef4444; margin-left:8px;"></i>MegaRetail</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════ -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">
+                    <i class="fas fa-star"></i> Basic features
+                </div>
+                <h2>Everything you need to run your company<br><span class="gradient-text">In one place</span></h2>
+                <p>FlowNest It combines financial management, artificial intelligence, and internal communication tools into a unified system designed for the Arab market
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <!-- AI Assistant -->
+                <div class="feature-card feat-ai">
+                    <div class="feature-icon-wrap"><i class="fas fa-robot"></i></div>
+                    <h3>Assistant RAG Smart</h3>
+                    <p>Ask about your reports, policies, and balances in Arabic. Artificial intelligence searches your company documents and answers accurately
+                        Super powered by Llama.</p>
+                </div>
+
+                <!-- FlowNest Financial -->
+                <div class="feature-card feat-financial">
+                    <div class="feature-icon-wrap"><i class="fas fa-chart-line"></i></div>
+                    <h3>plate FlowNest Finance</h3>
+                    <p>Real-time financial analysis: revenues, expenses, costs, taxes, and profit margin. With smart alerts and indicators
+                        Automatically evaluate the company.</p>
+                </div>
+
+                <!-- Workspaces -->
+                <div class="feature-card feat-workspace">
+                    <div class="feature-icon-wrap"><i class="fas fa-layer-group"></i></div>
+                    <h3>Isolated work spaces</h3>
+                    <p>Each department has a separate workspace — internal conversations, documents, and tasks. Complete isolation between sections with the possibility of
+                        Complete communication.</p>
+                </div>
+
+                <!-- Team Management -->
+                <div class="feature-card feat-team">
+                    <div class="feature-icon-wrap"><i class="fas fa-users-cog"></i></div>
+                    <h3>Team management and permissions</h3>
+                    <p>Multi-level role system: owner, manager, and employee. With an approvals system that ensures data security and scalability
+                        Powers.</p>
+                </div>
+
+                <!-- Smart Reports -->
+                <div class="feature-card feat-reports">
+                    <div class="feature-icon-wrap"><i class="fas fa-file-alt"></i></div>
+                    <h3>Smart reports and analyses</h3>
+                    <p>Detailed performance reports with graphs. File analysis PDF, ExcelAutomatically extract images and data
+                        Financial ones.</p>
+                </div>
+
+                <!-- Multi-Tenant -->
+                <div class="feature-card feat-multitenant">
+                    <div class="feature-icon-wrap"><i class="fas fa-shield-alt"></i></div>
+                    <h3>System Multi-Tenant Safe</h3>
+                    <p>Your data is completely isolated from other companies. Structure SaaS Professionally designed from day one to ensure privacy
+                        And complete security.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+
+    <!-- ════════════════════════════════════════
+     VIDEO DEMO SECTION
+════════════════════════════════════════ -->
+    <section class="video-demo" id="demo">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label" style="color: #10b981; background: rgba(16,185,129,0.1);">
+                    <i class="fas fa-magic"></i> Exceptional user experience
+                </div>
+                <h2>Watch FlowNest <span class="gradient-text">At work</span></h2>
+                <p style="max-width: 700px; margin: 0 auto; line-height: 1.8;">No more complicated and boring systems. FlowNest Designed to be smooth, fast, and easy on the eyes. See how you can manage everything with the push of a button and without any technical complexity.</p>
+            </div>
+
+            <div class="video-wrapper">
+                <!-- Glow effect -->
+                <div class="video-glow"></div>
+
+                <!-- Video Container -->
+                <div class="video-container" id="videoContainer">
+                    <!-- Browser chrome bar -->
+                    <div class="video-chrome-bar">
+                        <div class="chrome-dots">
+                            <span style="background:#ff5f57"></span>
+                            <span style="background:#febc2e"></span>
+                            <span style="background:#28c840"></span>
+                        </div>
+                        <div class="chrome-url">
+                            <i class="fas fa-lock" style="color:#10b981; font-size:0.65rem;"></i>
+                            <span>flownest.app/dashboard</span>
+                        </div>
+                        <div class="chrome-actions">
+                            <i class="fas fa-redo" style="font-size:0.7rem; color:#64748b;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Actual Video Placeholder -->
+                    <div class="video-player-wrap" style="background:#0a0b14; cursor: pointer; position: relative; overflow: hidden;" onclick="startMarketingVideo()">
+                        <!-- Thumbnail Image (Animated) -->
+                        <img id="marketingVideoImg" src="{% static 'videos/demo_thumbnail.png' %}" alt="FlowNest Professional Demo Thumbnail" 
+                            style="width:100%; display:block; border-radius: 0 0 18px 18px; min-height: 300px; object-fit: cover; opacity: 0.8; transition: opacity 0.4s ease, transform 0.4s ease;" 
+                            onmouseover="this.style.opacity='1'; if(!this.classList.contains('playing')) this.style.transform='scale(1.02)';" 
+                            onmouseout="this.style.opacity='0.8'; if(!this.classList.contains('playing')) this.style.transform='scale(1)';">
+                        
+                        <!-- Professional Play Button Overlay -->
+                        <div class="play-overlay" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; z-index:10; pointer-events: none;">
+                            <div class="play-btn-outer" style="width:100px; height:100px; border-radius:50%; background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.4); display:flex; align-items:center; justify-content:center; animation:pulse-ring 2.5s infinite; transition:transform 0.3s;">
+                                <div class="play-btn-inner" style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, #10b981, #059669); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:white; box-shadow:0 10px 30px rgba(16,185,129,0.5);">
+                                    <i class="fas fa-play" style="margin-right:-4px;"></i>
+                                </div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.6); padding: 10px 28px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                                <p style="margin:0; color:white; font-weight:700; font-size:1.1rem; letter-spacing:0.5px;">See the full system tour</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature badges below video -->
+                <div class="video-badges">
+                    <div class="video-badge">
+                        <i class="fas fa-clock" style="color:var(--primary-light)"></i>
+                        <span>Tour 90 Again</span>
+                    </div>
+                    <div class="video-badge">
+                        <i class="fas fa-mobile-alt" style="color:#34d399"></i>
+                        <span>Responsive interface</span>
+                    </div>
+                    <div class="video-badge">
+                        <i class="fas fa-robot" style="color:var(--accent)"></i>
+                        <span>AI Real built-in</span>
+                    </div>
+                    <div class="video-badge">
+                        <i class="fas fa-shield-alt" style="color:var(--amber)"></i>
+                        <span>Secure data 100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+
+    <!-- ════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════ -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">
+                    <i class="fas fa-route"></i> Getting started steps
+                </div>
+                <h2>Start in <span class="gradient-text">3 Simple steps</span></h2>
+                <p>You don't need technical experience. Register your company and start smart management in minutes</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h3>Register your company</h3>
+                    <p>Create an account with your company information and choose its sector and divisions. The trial is free 7 Days without a card.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h3>Add your team</h3>
+                    <p>Send invitations to your managers and employees. Each employee is assigned to manage it automatically with appropriate powers.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h3>Start Smart Management</h3>
+                    <p>Upload your documents, monitor your finances, and talk to your AI assistant — everything in one place.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+
+    <!-- ════════════════════════════════════════
+     SECTORS
+════════════════════════════════════════ -->
+    <section class="sectors" id="sectors">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">
+                    <i class="fas fa-industry"></i> Supported sectors
+                </div>
+                <h2>Designed for <span class="gradient-text">Every sector</span></h2>
+                <p>FlowNest It adapts to the nature of your business — whether you are a business, an educational institution, a medical facility, or a real estate company</p>
+            </div>
+
+            <div class="sectors-grid">
+                <div class="sector-card sector-corporate">
+                    <span class="sector-icon">🏢</span>
+                    <h3>Companies and trade</h3>
+                    <p>Sales management, purchasing, HR, and finance. Ideal for medium-sized businesses.</p>
+                </div>
+                <div class="sector-card sector-education">
+                    <span class="sector-icon">🎓</span>
+                    <h3>Education and schools</h3>
+                    <p>Manage student affairs, absences, courses, and attendance records. For schools, institutes and universities.</p>
+                </div>
+                <div class="sector-card sector-medical">
+                    <span class="sector-icon">🏥</span>
+                    <h3>Health care</h3>
+                    <p>Patient records, medical inventory, device scheduling, and medical reports are securely stored.</p>
+                </div>
+                <div class="sector-card sector-real">
+                    <span class="sector-icon">🏗️</span>
+                    <h3>Real estate and construction</h3>
+                    <p>Manage projects, costs, contracts, and field work teams with high efficiency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+
+    <!-- ════════════════════════════════════════
+     PRICING
+════════════════════════════════════════ -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">
+                    <i class="fas fa-tag"></i> Subscription packages
+                </div>
+                <h2>Transparent pricing<br><span class="gradient-text">No hidden costs</span></h2>
+                <p>Start for free and choose the plan that best suits your business. You don't need a bank card to get started</p>
+            </div>
+
+            <div class="pricing-grid">
+
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-name">Free demo</div>
+                    <div class="pricing-price">
+                        Free <span></span>
+                    </div>
+                    <div class="pricing-period">For a period 7 Whole days — no card</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check-circle"></i> All basic features</li>
+                        <li><i class="fas fa-check-circle"></i> Assistant AI (RAG) Built-in</li>
+                        <li><i class="fas fa-check-circle"></i> Even 3 Sections</li>
+                        <li><i class="fas fa-check-circle"></i> plate FlowNest Finance</li>
+                        <li><i class="fas fa-check-circle"></i> Technical support via mail</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="{% url 'register' %}" class="btn btn-outline">
+                            <i class="fas fa-rocket"></i> Start for free
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Monthly Plan (Featured) -->
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">⭐ Most common</div>
+                    <div class="pricing-name">Monthly</div>
+                    <div class="pricing-price">
+                        3,000 <span>EGP/month</span>
+                    </div>
+                    <div class="pricing-period">Paid monthly — cancel anytime</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check-circle"></i> All features of demo</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited sections</li>
+                        <li><i class="fas fa-check-circle"></i> Unlimited file uploads</li>
+                        <li><i class="fas fa-check-circle"></i> Reports AI Advanced</li>
+                        <li><i class="fas fa-check-circle"></i> Priority + WhatsApp support</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="{% url 'register' %}" class="btn btn-primary">
+                            <i class="fas fa-crown"></i> Subscribe now
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Yearly Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-name">Annual</div>
+                    <div class="pricing-price">
+                        30,000 <span>EGP/year</span>
+                    </div>
+                    <div class="pricing-period">Paid annually — save 6,000 J.M</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check-circle"></i> All Shahry features</li>
+                        <li><i class="fas fa-check-circle"></i> Dedicated account manager</li>
+                        <li><i class="fas fa-check-circle"></i> Team training (online).)</li>
+                        <li><i class="fas fa-check-circle"></i> Additional system customization</li>
+                        <li><i class="fas fa-check-circle"></i> Support 24/7 With the highest priority</li>
+                    </ul>
+                    <div class="pricing-cta">
+                        <a href="{% url 'register' %}" class="btn btn-outline">
+                            <i class="fas fa-building"></i> For institutions
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <p style="text-align:center; margin-top:32px; font-size:0.85rem; color:var(--text-3);">
+                <i class="fas fa-lock" style="color:var(--emerald); margin-left:6px;"></i>
+                Payment is made securely through approved payment gateways. We do not save any bank data.
+            </p>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+
+    <!-- ════════════════════════════════════════
+     TRUST SECTION
+════════════════════════════════════════ -->
+    <section class="trust">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">
+                    <i class="fas fa-shield-alt"></i> Why trust us?
+                </div>
+                <h2>Safety and reliability<br><span class="gradient-text">At the institutional level</span></h2>
+            </div>
+
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-icon" style="background:rgba(16,185,129,0.15); color:#34d399;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4>Fully encrypted data</h4>
+                    <p>All your company data is completely encrypted and isolated. No one but you can access it.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon" style="background:rgba(99,102,241,0.15); color:var(--primary-light);">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h4>No card to try</h4>
+                    <p>Try the entire platform 7 days for free. We do not ask for any bank details before making your decision.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon" style="background:rgba(245,158,11,0.15); color:var(--amber);">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Specialized technical support</h4>
+                    <p>An Arabic support team is ready to help you with setup, training and use.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon" style="background:rgba(236,72,153,0.15); color:var(--accent);">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h4>Continuous updates</h4>
+                    <p>The platform is constantly evolving based on customer feedback and market developments.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+     FINAL CTA
+════════════════════════════════════════ -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-inner">
+                <h2>
+                    Start your journey with<br>
+                    <span class="gradient-text">FlowNest Today</span>
+                </h2>
+                <p>
+                    Join and try the smart management system for your company — <strong>7 Completely free days</strong>Without a bank card.
+                </p>
+                
+                <div style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 16px; margin: 24px auto 32px; max-width: 500px; text-align: center;">
+                    <p style="margin:0; font-size: 1.05rem; color: var(--text-2);">
+                        <i class="fas fa-headset" style="color:var(--emerald); margin-left:8px;"></i>
+                        Need help setting up? Talk to an expert now:<br>
+                        <a href="https://wa.me/201013874082" target="_blank" style="display:inline-block; margin-top:8px; font-size: 1.25rem; font-weight:700; color:var(--text-1); text-decoration:none; direction:ltr;">
+                            <i class="fab fa-whatsapp" style="color:#25d366; margin-right:6px;"></i> 0101 387 4082
+                        </a>
+                    </p>
+                </div>
+                <div class="cta-buttons">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-emerald btn-hero">
+                        <i class="fas fa-tachometer-alt"></i> Go to the control panel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-hero">
+                        <i class="fas fa-rocket"></i> Register your company for free
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline btn-hero">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    {% endif %}
+                </div>
+                <p class="free-note">
+                    <i class="fas fa-check-circle"></i>
+                    Without card &nbsp;·&nbsp; <i class="fas fa-check-circle"></i> Cancel at any time &nbsp;·&nbsp; <i
+                        class="fas fa-check-circle"></i> Arabic support
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <a href="#" class="logo">
+                    <div class="logo-icon"><i class="fas fa-infinity"></i></div>
+                    <span class="logo-text">FlowNest</span>
+                </a>
+
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#sectors">sectors</a>
+                    <a href="#pricing">Prices</a>
+                    <a href="{% url 'register' %}">Registration</a>
+                    <a href="{% url 'login' %}">Login</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                &copy; 2026 FlowNest ERP &mdash; Intelligent business management system for Arab companies.
+                All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // Smooth counter animation
+        function animateCounters() {
+            document.querySelectorAll('.stat-number[data-target]').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                let current = 0;
+                const step = target / 60;
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = Math.floor(current).toLocaleString('ar-EG') + (el.dataset.suffix || '');
+                }, 16);
+            });
+        }
+
+        // Intersection observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.feature-card, .sector-card, .pricing-card, .trust-card, .step-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // ── Smart Marketing Video Player ──
+        function startMarketingVideo() {
+            const overlay = document.querySelector('.play-overlay');
+            const img = document.getElementById('marketingVideoImg');
+            
+            if (img.classList.contains('playing')) return;
+            
+            // Hide play overlay
+            overlay.style.transition = 'opacity 0.3s ease';
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 300);
+            
+            // Start the fake video playback (pan image slowly for a dynamic hook)
+            img.classList.add('playing');
+            img.src = "{% static 'videos/demo_thumbnail.png' %}";
+            img.style.transition = 'transform 8.5s ease-in-out';
+            img.style.transform = 'scale(1.08) translateY(-25%)';
+            
+            // Wait 8.5 seconds to hook the user, then interrupt with the marketing modal
+            setTimeout(() => {
+                const modal = document.getElementById('videoModal');
+                modal.style.display = 'flex';
+                
+                // Reset video image behind the modal
+                img.classList.remove('playing');
+                img.style.transition = 'none';
+                img.style.transform = 'scale(1) translateY(0)';
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.style.opacity = '1', 50);
+            }, 8500);
+        }
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/201013874082" class="whatsapp-float" target="_blank" title="Contact us via WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Video Modal Placeholder -->
+    <div id="videoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center; flex-direction:column; backdrop-filter:blur(10px); opacity: 0; animation: fadeIn 0.3s forwards;">
+        <button onclick="document.getElementById('videoModal').style.display='none'" style="position:absolute; top:30px; right:40px; background:transparent; border:none; color:white; font-size:2.5rem; cursor:pointer; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.2) rotate(90deg)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div style="text-align:center; max-width:650px; width: 90%; padding:50px 40px; background:var(--bg-1); border-radius:24px; border:1px solid rgba(16,185,129,0.3); box-shadow:0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(16,185,129,0.1); position: relative; overflow: hidden;">
+            
+            <!-- Marketing Glow -->
+            <div style="position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:200px; height:200px; background:radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%); filter:blur(20px); pointer-events:none;"></div>
+
+            <div style="width:90px; height:90px; background:rgba(16,185,129,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:2.2rem; color:var(--emerald); position: relative; z-index: 1;">
+                <i class="fas fa-rocket"></i>
+            </div>
+            
+            <h3 style="font-size:2.2rem; margin-bottom:16px; position: relative; z-index: 1;">Don't waste your time watching! 🚀</h3>
+            
+            <p style="color:var(--text-2); font-size:1.15rem; line-height:1.8; margin-bottom:32px; position: relative; z-index: 1;">
+                Experience is the best proof... Instead of watching a video, why not <strong style="color:white;">Start trying the system yourself?</strong><br>
+                Receive 7 Completely free days to learn about all the features FlowNest.
+            </p>
+            
+            <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1;">
+                <a href="{% url 'register' %}" class="btn btn-primary" style="font-size:1.15rem; padding:16px 32px; border-radius:50px;">
+                    Start your free trial now
+                </a>
+                <a href="https://wa.me/201013874082" target="_blank" class="btn btn-emerald" style="font-size:1.15rem; padding:16px 32px; border-radius:50px; background:transparent; border:2px solid #10b981;">
+                    <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+                    <span dir="ltr">0101 387 4082</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+
+</body>
+
+</html>

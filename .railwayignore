@@ -1,0 +1,67 @@
+# Virtual Environments (Catch all)
+.venv
+.venv/
+**/.venv/
+venv/
+venv/
+**/venv/
+env/
+env/
+**/env/
+
+# Nested Virtual Environments
+**/Lib/
+**/Scripts/
+**/Include/
+**/site-packages/
+**/bin/
+
+# Specific nested venv skip (to be absolutely sure)
+myenv/myenv/Lib/
+myenv/myenv/Scripts/
+myenv/myenv/Include/
+myenv/myenv/share/
+
+# Media and Large Data Files
+**/media/
+**/*.csv
+**/*.xlsx
+**/*.pdf
+**/*.pt
+**/*.bin
+**/*.pyd
+**/erp_chroma_db/
+**/chroma_db/
+
+# Cache and Logs
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.log
+
+# IDEs
+.idea/
+.vscode/
+
+# Git
+.git/
+
+# Databases
+*.sqlite3
+
+# Cache and Large Assets
+.cache/
+**/.cache/
+node_modules/
+**/node_modules/
+.npm/
+.python-host-interpreter
+
+# Local persistent data (Important!)
+persistent_data/
+**/persistent_data/
+chroma_db/
+**/chroma_db/
+media/
+**/media/
+

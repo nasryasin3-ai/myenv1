@@ -1,0 +1,76 @@
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.pyc
+
+# ===========================
+# Virtual Environments
+# ===========================
+.venv/
+venv/
+env/
+myenv/
+*.egg-info/
+dist/
+build/
+
+# ===========================
+# Django
+# ===========================
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media & Static (uploaded files)
+media/
+staticfiles/
+static_root/
+
+# ===========================
+# AI / Vector Databases
+# ===========================
+chroma_db/
+erp_chroma_db/
+*.sqlite3
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.*
+!.env.example
+
+# ===========================
+# IDEs & Editors
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Node (if any frontend)
+# ===========================
+node_modules/
+npm-debug.log*
+
+# ===========================
+# Deployment
+# ===========================
+*.pid
+*.seed
+*.pid.lock

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[80vh] relative">
+    <!-- Background ambient -->
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(99,102,241,0.08), transparent 60%);"></div>
+
+    <div class="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8 relative z-10">
+        
+        <!-- Logo & Brand -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl" style="background: linear-gradient(135deg, #6366f1, #ec4899); box-shadow: 0 0 24px rgba(99,102,241,0.35);">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <span class="text-2xl font-black" style="background: linear-gradient(135deg, #818cf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FlowNest ERP</span>
+            </div>
+            <h2 class="text-2xl font-extrabold text-white mb-2">
+                Welcome back
+            </h2>
+            <p class="text-gray-400 text-sm">Enter your data to access your company's management system</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="flex items-center gap-3 bg-red-500/10 border border-red-500/40 rounded-2xl px-4 py-3 text-red-300 animate-shake">
+                <i class="fas fa-exclamation-triangle text-red-400 flex-shrink-0"></i>
+                <span class="text-sm">Incorrect username or password.</span>
+            </div>
+            {% endif %}
+            
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Username</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-gray-500"></i>
+                    </div>
+                    <input type="text" name="username" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter the user name" required autofocus>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300">Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-500"></i>
+                    </div>
+                    <input type="password" name="password" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="••••••••" required>
+                </div>
+                <div class="flex justify-end mt-1">
+                    <a href="{% url 'password_reset' %}" class="text-xs text-gray-400 hover:text-primary hover:underline transition-colors">Forgot your password?</a>
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02]">
+                Login <i class="fas fa-arrow-left mr-2"></i>
+            </button>
+            
+            <input type="hidden" name="next" value="{{ next|default:'/' }}">
+        </form>
+
+        <div class="mt-8 text-center text-sm">
+            <p class="text-gray-400">
+                Don't have an account? 
+                <a href="{% url 'register' %}" class="font-bold text-primary hover:text-indigo-400 hover:underline transition-colors">Try for free 7 days</a>
+            </p>
+        </div>
+
+        <!-- Trust Row -->
+        <div class="flex items-center justify-center gap-4 mt-6 pt-5 border-t border-white/5">
+            <div class="flex items-center gap-1.5 text-xs text-gray-600">
+                <i class="fas fa-lock text-emerald-600"></i> Secure connection
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-600">
+                <i class="fas fa-shield-alt text-indigo-600"></i> Protected data
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-600">
+                <i class="fas fa-headset text-amber-600"></i> Arabic support
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .animate-shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+</style>
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const usernameInput = this.querySelector('input[name="username"]');
+        if (usernameInput) {
+            // Clean the username to match the stored version (lowercase, spaces to underscores)
+            usernameInput.value = usernameInput.value.toLowerCase().trim()
+                .replace(/\s+/g, '_')
+                .replace(/[^\w\s_]/g, '');
+        }
+    });
+</script>
+{% endblock %}
