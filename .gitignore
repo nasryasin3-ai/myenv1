@@ -1,5 +1,5 @@
 # ===========================
-# Python
+# Python cache files
 # ===========================
 __pycache__/
 *.py[cod]
@@ -10,14 +10,14 @@ __pycache__/
 
 # ===========================
 # Virtual Environments
+# (ignore the packages, NOT the project)
 # ===========================
 .venv/
-venv/
-env/
-myenv/
-*.egg-info/
-dist/
-build/
+myenv/myenv/Lib/
+myenv/myenv/Scripts/
+myenv/myenv/Include/
+myenv/myenv/pyvenv.cfg
+myenv/myenv/share/
 
 # ===========================
 # Django
@@ -27,8 +27,11 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Media & Static (uploaded files)
+# ===========================
+# Media & Static (uploaded user files)
+# ===========================
 media/
+myenv/myenv/yasso/media/
 staticfiles/
 static_root/
 
@@ -37,7 +40,16 @@ static_root/
 # ===========================
 chroma_db/
 erp_chroma_db/
+myenv/myenv/yasso/chroma_db/
+myenv/myenv/yasso/erp_chroma_db/
 *.sqlite3
+
+# ===========================
+# Large data files
+# ===========================
+*.csv
+*.xlsx
+*.xls
 
 # ===========================
 # Environment Variables
@@ -53,7 +65,6 @@ erp_chroma_db/
 .idea/
 *.swp
 *.swo
-*~
 
 # ===========================
 # OS Files
@@ -61,16 +72,3 @@ erp_chroma_db/
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# ===========================
-# Node (if any frontend)
-# ===========================
-node_modules/
-npm-debug.log*
-
-# ===========================
-# Deployment
-# ===========================
-*.pid
-*.seed
-*.pid.lock
