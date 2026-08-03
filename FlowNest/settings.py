@@ -18,7 +18,7 @@ elif os.path.exists('/app/persistent_data'):
 else:
     PERSISTENT_DATA_DIR = BASE_DIR
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = str(config('DEBUG', default='False')).lower() in ('true', '1', 't', 'yes')
 SECRET_KEY = config('SECRET_KEY', default='')
 if not DEBUG and not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable must be set in production!")
