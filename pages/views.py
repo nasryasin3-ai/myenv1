@@ -1275,7 +1275,7 @@ def auto_setup_admin(request):
     from products.models import Profile
     from django.http import HttpResponse
     
-    username = 'admin_dev'
+    username = 'flownest_admin'
     password = os.getenv('DEV_PASSWORD', 'DevMaster@2026')
     
     try:

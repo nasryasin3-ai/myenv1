@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from products.models import Profile
 
 def create_dev_user():
-    username = 'admin_dev'
+    username = 'flownest_admin'
     password = 'admin12345'
     
     if not User.objects.filter(username=username).exists():
