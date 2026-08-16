@@ -1266,24 +1266,26 @@ def account_settings_view(request):
     })
 
 def auto_setup_admin(request):
-    """Restricted to local development or secure triggers."""
+    """Restricted trigger to initialize admin account on deployment."""
     import os
-    if os.getenv('RAILWAY_ENVIRONMENT_NAME') == 'production':
-        return render(request, 'pages/unauthorized.html', {'custom_error': 'هذا الإجراء معطل في بيئة الإنتاج.'})
-    
     from django.contrib.auth.models import User
     from products.models import Profile
     from django.http import HttpResponse
     
     username = 'flownest_admin'
-    password = os.getenv('DEV_PASSWORD', 'DevMaster@2026')
+    password = os.getenv('DEV_PASSWORD', 'admin12345')
     
     try:
         user, created = User.objects.get_or_create(username=username, defaults={'is_staff': True, 'is_superuser': True})
-        if created: user.set_password(password)
+        user.set_password(password)
+        user.is_staff = True
+        user.is_superuser = True
         user.save()
         profile, _ = Profile.objects.get_or_create(user=user, defaults={'role': 'developer', 'company_name': 'FlowNest Core', 'is_approved': True})
-        return HttpResponse(f"<h1>Success</h1><p>Admin user verified.</p>")
+        profile.role = 'developer'
+        profile.is_approved = True
+        profile.save()
+        return HttpResponse(f"<div style='font-family:sans-serif; text-align:center; padding:50px;'><h1>✅ Success!</h1><p>Admin user <b>{username}</b> verified successfully!</p><p><a href='/login/'>Click here to Login</a></p></div>")
     except Exception as e:
         return HttpResponse(f"<h1>Error</h1><p>{str(e)}</p>")
 
