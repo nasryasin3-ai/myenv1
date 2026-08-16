@@ -10,7 +10,7 @@ from products.models import Profile
 
 def create_dev_user():
     username = 'admin_dev'
-    password = 'DevMaster@2026'
+    password = 'admin12345'
     
     if not User.objects.filter(username=username).exists():
         user = User.objects.create_superuser(username=username, email='admin@flownest.core', password=password)

@@ -1227,6 +1227,22 @@ def account_settings_view(request):
     error_message = None
 
     if request.method == 'POST':
+        # Update username if changed and unique
+        new_username = request.POST.get('username')
+        if new_username and new_username != user.username:
+            from django.contrib.auth.models import User
+            if User.objects.filter(username=new_username).exclude(pk=user.pk).exists():
+                error_message = "اسم المستخدم هذا مُستخدَم بالفعل."
+            else:
+                user.username = new_username
+
+        # Update password if provided
+        new_password = request.POST.get('new_password')
+        if new_password and len(new_password.strip()) > 0:
+            user.set_password(new_password)
+            from django.contrib.auth import update_session_auth_hash
+            update_session_auth_hash(request, user)
+
         # Update User fields
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
@@ -1239,7 +1255,8 @@ def account_settings_view(request):
         profile.company_description = request.POST.get('company_description', profile.company_description)
         profile.save()
 
-        success_message = "تم تحديث البيانات بنجاح!"
+        if not error_message:
+            success_message = "تم تحديث البيانات بنجاح!"
 
     return render(request, 'pages/settings.html', {
         'profile': profile,

@@ -23,6 +23,13 @@
         </div>
     </div>
 
+    {% if error_message %}
+    <div class="alert alert-error bg-rose-500/20 border-rose-500/30 text-rose-400 rounded-2xl shadow-lg">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span class="font-bold">{{ error_message }}</span>
+    </div>
+    {% endif %}
+
     {% if success_message %}
     <div class="alert alert-success bg-emerald-500/20 border-emerald-500/30 text-emerald-400 rounded-2xl shadow-lg animate-bounce">
         <i class="fas fa-check-circle"></i>
@@ -82,9 +89,13 @@
                 <!-- Personal Tab -->
                 <div id="tab-profile-content" class="settings-tab bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-10 shadow-2xl">
                     <h2 class="text-2xl font-black mb-8 flex items-center gap-4">
-                        <i class="fas fa-user-circle text-primary"></i> Personal salts
+                        <i class="fas fa-user-circle text-primary"></i> Personal details
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-sm font-bold text-gray-400">Username (اسم المستخدم)</label>
+                            <input type="text" name="username" value="{{ user.username }}" required class="w-full bg-black/40 border border-white/10 rounded-xl p-4 focus:ring-2 focus:ring-primary outline-none text-white font-bold transition-all">
+                        </div>
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-gray-400">First name</label>
                             <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full bg-black/40 border border-white/10 rounded-xl p-4 focus:ring-2 focus:ring-primary outline-none text-white font-bold transition-all">
@@ -127,14 +138,15 @@
                         <i class="fas fa-user-shield"></i> Security and verification
                     </h2>
                     <div class="space-y-8">
-                        <div class="flex items-center justify-between p-6 bg-rose-500/5 rounded-3xl border border-rose-500/10">
+                        <div class="p-6 bg-rose-500/5 rounded-3xl border border-rose-500/10 space-y-4">
                             <div>
-                                <h3 class="font-black text-lg text-white">Change password</h3>
-                                <p class="text-sm text-gray-400">Modify your password regularly to protect your account.</p>
+                                <h3 class="font-black text-lg text-white">Change Password (تغيير كلمة السر)</h3>
+                                <p class="text-sm text-gray-400">Type a new password below to update your account password.</p>
                             </div>
-                            <a href="{% url 'password_change' %}" class="btn bg-rose-500 hover:bg-rose-600 border-none text-white font-bold rounded-2xl px-8 shadow-lg shadow-rose-500/20 transition-all hover:scale-105">
-                                Edit
-                            </a>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-gray-400">New password (كلمة السر الجديدة)</label>
+                                <input type="password" name="new_password" placeholder="Leave empty if you do not want to change it" class="w-full bg-black/40 border border-white/10 rounded-xl p-4 focus:ring-2 focus:ring-rose-500 outline-none text-white font-bold transition-all">
+                            </div>
                         </div>
                         
                         <div class="p-6 bg-white/[0.02] rounded-3xl border border-white/[0.05]">
@@ -180,13 +192,9 @@
         document.getElementById(`btn-${tab}`).querySelector('span').classList.add('text-white');
         document.getElementById(`btn-${tab}`).querySelector('span').classList.remove('text-gray-400');
 
-        // Hide save button on security tab if preferred
+        // Keep save button container always visible
         const saveContainer = document.getElementById('save-btn-container');
-        if (tab === 'security') {
-            saveContainer.classList.add('hidden');
-        } else {
-            saveContainer.classList.remove('hidden');
-        }
+        saveContainer.classList.remove('hidden');
     }
 </script>
 {% endblock %}
