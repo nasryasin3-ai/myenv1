@@ -117,10 +117,16 @@ def register_view(request):
                             try: dept_obj = CustomDepartment.objects.get(pk=selected_dept_id, company=company)
                             except: pass
 
+                        # Determine approval status based on role
+                        is_approved_flag = True if role in ['owner', 'developer'] else False
+                        is_primary = True if role == 'owner' else False
+                        
                         Profile.objects.create(
-                            user=user, department=dept_obj, role='developer', 
-                            company=company, company_name=company_name, is_approved=True,
-                            is_platform_admin=True,
+                            user=user, department=dept_obj, role=role, 
+                            company=company, company_name=company_name, 
+                            is_approved=is_approved_flag,
+                            is_primary_owner=is_primary,
+                            is_platform_admin=(role == 'developer'),
                             full_name=full_name
                         )
                         login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
@@ -146,10 +152,10 @@ def quick_dev_login(request):
     from django.contrib.auth import login
     
     user, _ = User.objects.get_or_create(
-        username='dev_master', 
-        defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
+        username='dev_admin', 
+        defaults={'email': 'devadmin@flownest.com', 'is_staff': True, 'is_superuser': True}
     )
-    user.set_password('123456')
+    user.set_password('dev123456')
     user.is_staff = True
     user.is_superuser = True
     user.save()
@@ -222,11 +228,11 @@ def api_get_departments(request):
 def dashboard_view(request):
     profile = getattr(request.user, 'profile', None)
     if profile:
-        profile.is_approved = True
-        profile.role = 'developer'
-        profile.save()
+        if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
+            profile.is_approved = True
+            profile.save()
         
-    if not profile: 
+    if not profile or not profile.is_approved: 
         return render(request, 'pages/pending.html', {'profile': profile})
     
     # Fetch departments: use FK if available, else fallback to company_name string
