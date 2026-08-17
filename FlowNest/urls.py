@@ -48,10 +48,7 @@ urlpatterns = [
     path('dev/', pages_views.dev_portal_direct, name='dev_portal'),
     path('dev-portal/', pages_views.dev_portal_direct),
     path('dev-login/', pages_views.dev_portal_direct),
-    path('internal-dev-portal-access-2026/', pages_views.dev_register_view, name='dev_register'),
-    path('internal/dev-portal-access-2026/', pages_views.dev_register_view),  # Alias to help with typos
-    path('dev-login/', pages_views.auto_setup_admin, name='dev_login_alias'),
-    path('dev/', pages_views.auto_setup_admin),
+    path('quick-dev/', pages_views.dev_portal_direct),
     path('api/get-departments/', pages_views.api_get_departments, name='api_get_departments'),
     path('team/approve/<int:profile_id>/', pages_views.team_member_approve_view, name='team_member_approve'),
     path('team/delete/<int:profile_id>/', pages_views.team_member_delete_view, name='team_member_delete'),
