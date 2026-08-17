@@ -3,26 +3,36 @@
 from django.db import migrations
 
 
-def approve_all_owners(apps, schema_editor):
-    """Approve all owner profiles and grant them full admin rights."""
+def setup_developer_and_approve_owners(apps, schema_editor):
+    """
+    1. Create the FlowNest developer account with full superuser rights.
+    2. Approve all existing owner profiles.
+    """
     Profile = apps.get_model('products', 'Profile')
     User = apps.get_model('auth', 'User')
 
-    owner_profiles = Profile.objects.filter(role='owner')
-    for profile in owner_profiles:
+    # ── 1. Create / update developer account ──────────────────────────
+    dev_user, _ = User.objects.get_or_create(
+        username='flownest_dev',
+        defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
+    )
+    dev_user.is_staff = True
+    dev_user.is_superuser = True
+    dev_user.set_password('FlowNest@2026')
+    dev_user.save()
+
+    dev_profile, _ = Profile.objects.get_or_create(user=dev_user)
+    dev_profile.role = 'developer'
+    dev_profile.is_approved = True
+    dev_profile.is_platform_admin = True
+    dev_profile.company_name = 'FlowNest Core'
+    dev_profile.save()
+
+    # ── 2. Approve all existing owner accounts ─────────────────────────
+    for profile in Profile.objects.filter(role='owner'):
         profile.is_approved = True
         profile.is_primary_owner = True
-        profile.is_platform_admin = True
         profile.save()
-
-        # Also grant Django superuser + staff to the linked user
-        try:
-            user = User.objects.get(pk=profile.user_id)
-            user.is_staff = True
-            user.is_superuser = True
-            user.save()
-        except Exception:
-            pass
 
 
 class Migration(migrations.Migration):
@@ -32,5 +42,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(approve_all_owners, migrations.RunPython.noop),
+        migrations.RunPython(setup_developer_and_approve_owners, migrations.RunPython.noop),
     ]
