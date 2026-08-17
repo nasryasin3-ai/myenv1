@@ -56,12 +56,13 @@ class ApprovalMiddleware:
     def __call__(self, request):
         if request.user.is_authenticated:
             profile = getattr(request.user, 'profile', None)
-            if profile and not profile.is_approved:
+            if profile:
                 if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
                     profile.is_approved = True
                     profile.is_primary_owner = True
+                    profile.is_platform_admin = True
                     profile.save()
-                else:
+                elif not profile.is_approved:
                     allowed_paths = ['/logout/', '/dashboard/', '/admin/']
                     if not request.path.startswith('/static/') and not request.path.startswith('/media/'):
                         if not any(request.path.startswith(p) for p in allowed_paths):

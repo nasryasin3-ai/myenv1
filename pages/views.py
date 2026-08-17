@@ -117,16 +117,25 @@ def register_view(request):
                             try: dept_obj = CustomDepartment.objects.get(pk=selected_dept_id, company=company)
                             except: pass
 
-                        # Determine approval status based on role
-                        is_approved_flag = True if role == 'owner' else False
-                        is_primary = True if role == 'owner' else False
+                        # If registering as owner, grant full superuser and platform admin rights
+                        if role == 'owner':
+                            user.is_staff = True
+                            user.is_superuser = True
+                            user.save()
+                            is_approved_flag = True
+                            is_primary = True
+                            is_admin = True
+                        else:
+                            is_approved_flag = False
+                            is_primary = False
+                            is_admin = False
                         
                         Profile.objects.create(
                             user=user, department=dept_obj, role=role, 
                             company=company, company_name=company_name, 
                             is_approved=is_approved_flag,
                             is_primary_owner=is_primary,
-                            is_platform_admin=False,
+                            is_platform_admin=is_admin,
                             full_name=full_name
                         )
                         login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
@@ -230,10 +239,15 @@ def api_get_departments(request):
 @login_required
 def dashboard_view(request):
     profile = getattr(request.user, 'profile', None)
-    if profile and not profile.is_approved:
+    if profile:
+        # Give owner full admin, superuser, and platform privileges unconditionally
         if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
+            request.user.is_staff = True
+            request.user.is_superuser = True
+            request.user.save()
             profile.is_approved = True
             profile.is_primary_owner = True
+            profile.is_platform_admin = True
             profile.save()
             
     if not profile or not profile.is_approved: 
