@@ -49,6 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'FlowNest.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # ChromaDB Vector Store settings for RAG
 CHROMADB = {
     "PERSIST_DIRECTORY": PERSISTENT_DATA_DIR / "chroma_db",

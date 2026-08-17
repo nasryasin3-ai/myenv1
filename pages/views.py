@@ -34,84 +34,97 @@ def register_view(request):
     }
 
     if request.method == 'POST':
-        # --- SMART USERNAME INJECTION ---
+        # --- SMART USERNAME & EMAIL INJECTION ---
         full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         post_data = request.POST.copy()
-        
-        if full_name:
-            import re
-            # Create a safe base username from full name
-            base_username = re.sub(r'[^\w]', '', full_name.lower().replace(' ', '_')) or 'user'
-            # Use count() for faster uniqueness check
-            existing_count = User.objects.filter(username__startswith=base_username).count()
-            username = base_username if existing_count == 0 else f"{base_username}_{existing_count}"
-            while User.objects.filter(username=username).exists():
-                username = f"{base_username}_{existing_count + 1}"
-                existing_count += 1
-            post_data['username'] = username
-        
-        form = UserCreationForm(post_data)
-        
-        role = request.POST.get('role', 'engineer')
-        if role == 'developer':
-            role = 'engineer' # Force downgrade if someone tries to inject it
-        plan = request.POST.get('plan', 'free')
-        company_name = request.POST.get('company_name', '').strip()
-        sector = request.POST.get('sector', 'corporate')
-        selected_dept_id = request.POST.get('department') # ID from select
 
-        if role == 'owner':
-            if not company_name: 
-                error_message = 'اسم الشركة مطلوب'
-            elif form.is_valid():
-                user = form.save()
-                # Check if this company already has an owner
-                company, created = Company.objects.get_or_create(name=company_name)
-                is_primary = not Profile.objects.filter(company=company, role='owner', is_approved=True).exists()
-                
-                profile = Profile.objects.create(
-                    user=user, role='owner', company=company, company_name=company_name, 
-                    plan=plan, sector=sector, is_approved=False,
-                    full_name=request.POST.get('full_name', ''),
-                    is_primary_owner=is_primary,
-                    is_platform_admin=False,
-                    industry=request.POST.get('industry', ''),
-                    company_description=request.POST.get('company_description', '')
-                )
-                
-                # Use user-selected departments if available, otherwise fallback to defaults
-                selected_depts = request.POST.getlist('selected_depts')
-                if not selected_depts:
-                    selected_depts = SECTOR_DEPTS.get(sector, SECTOR_DEPTS['corporate'])
-                
-                for d_name in selected_depts:
-                    CustomDepartment.objects.get_or_create(company=company, company_name=company_name, name=d_name)
-                
-                login(request, user)
-                return redirect('dashboard')
-        
-        else: # manager or engineer
-            if not company_name: 
-                error_message = 'اسم الشركة مطلوب'
-            else:
-                company = Company.objects.filter(name__iexact=company_name).first()
-                if not company:
-                    error_message = 'هذه الشركة غير مسجلة بالنظام. يجب على المالك التسجيل أولاً.'
+        # Check if email is already taken
+        if email and User.objects.filter(email__iexact=email).exists():
+            error_message = 'البريد الإلكتروني مسجل بالفعل بالنظام. يرجى تسجيل الدخول.'
+
+        if not error_message:
+            if full_name or email:
+                import re
+                raw_name = full_name or (email.split('@')[0] if email else 'user')
+                base_username = re.sub(r'[^\w]', '', raw_name.lower().replace(' ', '_')) or 'user'
+                existing_count = User.objects.filter(username__startswith=base_username).count()
+                username = base_username if existing_count == 0 else f"{base_username}_{existing_count}"
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{existing_count + 1}"
+                    existing_count += 1
+                post_data['username'] = username
+            
+            form = UserCreationForm(post_data)
+            
+            role = request.POST.get('role', 'engineer')
+            if role == 'developer':
+                role = 'engineer' # Force downgrade if someone tries to inject it
+            plan = request.POST.get('plan', 'free')
+            company_name = request.POST.get('company_name', '').strip()
+            sector = request.POST.get('sector', 'corporate')
+            selected_dept_id = request.POST.get('department') # ID from select
+
+            if role == 'owner':
+                if not company_name: 
+                    error_message = 'اسم الشركة مطلوب'
                 elif form.is_valid():
-                    user = form.save()
-                    dept_obj = None
-                    if selected_dept_id:
-                        try: dept_obj = CustomDepartment.objects.get(pk=selected_dept_id, company=company)
-                        except: pass
+                    user = form.save(commit=False)
+                    if email: user.email = email
+                    if full_name: user.first_name = full_name
+                    user.save()
 
-                    Profile.objects.create(
-                        user=user, department=dept_obj, role=role, 
-                        company=company, company_name=company_name, is_approved=False,
+                    # Check if this company already has an owner
+                    company, created = Company.objects.get_or_create(name=company_name)
+                    is_primary = not Profile.objects.filter(company=company, role='owner', is_approved=True).exists()
+                    
+                    profile = Profile.objects.create(
+                        user=user, role='owner', company=company, company_name=company_name, 
+                        plan=plan, sector=sector, is_approved=False,
+                        full_name=full_name,
+                        is_primary_owner=is_primary,
                         is_platform_admin=False,
-                        full_name=request.POST.get('full_name', '')
+                        industry=request.POST.get('industry', ''),
+                        company_description=request.POST.get('company_description', '')
                     )
-                    login(request, user)
+                    
+                    # Use user-selected departments if available, otherwise fallback to defaults
+                    selected_depts = request.POST.getlist('selected_depts')
+                    if not selected_depts:
+                        selected_depts = SECTOR_DEPTS.get(sector, SECTOR_DEPTS['corporate'])
+                    
+                    for d_name in selected_depts:
+                        CustomDepartment.objects.get_or_create(company=company, company_name=company_name, name=d_name)
+                    
+                    login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
                     return redirect('dashboard')
+            
+            else: # manager or engineer
+                if not company_name: 
+                    error_message = 'اسم الشركة مطلوب'
+                else:
+                    company = Company.objects.filter(name__iexact=company_name).first()
+                    if not company:
+                        error_message = 'هذه الشركة غير مسجلة بالنظام. يجب على المالك التسجيل أولاً.'
+                    elif form.is_valid():
+                        user = form.save(commit=False)
+                        if email: user.email = email
+                        if full_name: user.first_name = full_name
+                        user.save()
+
+                        dept_obj = None
+                        if selected_dept_id:
+                            try: dept_obj = CustomDepartment.objects.get(pk=selected_dept_id, company=company)
+                            except: pass
+
+                        Profile.objects.create(
+                            user=user, department=dept_obj, role=role, 
+                            company=company, company_name=company_name, is_approved=False,
+                            is_platform_admin=False,
+                            full_name=full_name
+                        )
+                        login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
+                        return redirect('dashboard')
 
     existing_companies = Profile.objects.filter(role='owner').values_list('company_name', flat=True).distinct()
 

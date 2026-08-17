@@ -31,12 +31,12 @@
             {% endif %}
             
             <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-300">Username</label>
+                <label class="block text-sm font-medium text-gray-300">Username or Email</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="fas fa-user text-gray-500"></i>
+                        <i class="fas fa-envelope text-gray-500"></i>
                     </div>
-                    <input type="text" name="username" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter the user name" required autofocus>
+                    <input type="text" name="username" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter your username or email" required autofocus>
                 </div>
             </div>
 
@@ -96,10 +96,7 @@
     document.querySelector('form').addEventListener('submit', function(e) {
         const usernameInput = this.querySelector('input[name="username"]');
         if (usernameInput) {
-            // Clean the username to match the stored version (lowercase, spaces to underscores)
-            usernameInput.value = usernameInput.value.toLowerCase().trim()
-                .replace(/\s+/g, '_')
-                .replace(/[^\w\s_]/g, '');
+            usernameInput.value = usernameInput.value.trim();
         }
     });
 </script>
