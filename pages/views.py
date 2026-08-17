@@ -150,30 +150,30 @@ def dev_portal_direct(request):
     from django.contrib.auth.models import User
     from products.models import Profile
     from django.contrib.auth import login, logout
+    from django.http import HttpResponse
     
-    # Force logout old session (e.g. yaso)
-    logout(request)
-    
-    user, _ = User.objects.get_or_create(
-        username='flownest_developer', 
-        defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
-    )
-    user.set_password('dev123456')
-    user.is_staff = True
-    user.is_superuser = True
-    user.save()
-    
-    profile, _ = Profile.objects.get_or_create(
-        user=user, 
-        defaults={'role': 'developer', 'company_name': 'FlowNest Core', 'is_approved': True, 'is_platform_admin': True}
-    )
-    profile.role = 'developer'
-    profile.is_approved = True
-    profile.is_platform_admin = True
-    profile.save()
-    
-    login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
-    return redirect('dashboard')
+    try:
+        logout(request)
+        user, _ = User.objects.get_or_create(
+            username='flownest_developer', 
+            defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
+        )
+        user.set_password('dev123456')
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.role = 'developer'
+        profile.is_approved = True
+        profile.is_platform_admin = True
+        profile.company_name = 'FlowNest Core'
+        profile.save()
+        
+        login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
+        return redirect('dashboard')
+    except Exception as e:
+        return HttpResponse(f"<h1>Developer Access Error</h1><p>{str(e)}</p>")
 
 @csrf_exempt
 def dev_register_view(request):
