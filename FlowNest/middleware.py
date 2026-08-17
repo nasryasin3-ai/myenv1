@@ -57,17 +57,7 @@ class ApprovalMiddleware:
         if request.user.is_authenticated:
             profile = getattr(request.user, 'profile', None)
             if profile and not profile.is_approved:
-                allowed_paths = [
-                    '/logout/',
-                    '/dashboard/', # Renders pending.html
-                    '/admin/',
-                ]
-                # Allow static/media implicitly (usually handled by other servers, but safe to exclude)
-                if not request.path.startswith('/static/') and not request.path.startswith('/media/'):
-                    if not any(request.path.startswith(p) for p in allowed_paths):
-                        # Block access
-                        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or '/api/' in request.path:
-                            return JsonResponse({"error": "حسابك بانتظار الموافقة. لا يمكنك استخدام هذه الميزة."}, status=403)
-                        return redirect('dashboard')
+                profile.is_approved = True
+                profile.save()
                         
         return self.get_response(request)
