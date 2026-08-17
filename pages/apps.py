@@ -5,13 +5,13 @@ class PagesConfig(AppConfig):
     name = 'pages'
 
     def ready(self):
-        """Create/update the developer account every time the server starts."""
-        try:
-            self._ensure_dev_account()
-        except Exception:
-            pass  # DB may not be ready yet (e.g. first migrate run)
+        from django.db.models.signals import post_migrate
+        post_migrate.connect(_ensure_dev_account, sender=self)
 
-    def _ensure_dev_account(self):
+
+def _ensure_dev_account(sender, **kwargs):
+    """Create/update the developer account after every migration run."""
+    try:
         from django.contrib.auth.models import User
         from django.contrib.auth.hashers import make_password
         from products.models import Profile
@@ -37,3 +37,6 @@ class PagesConfig(AppConfig):
         profile.is_platform_admin = True
         profile.company_name = 'FlowNest Core'
         profile.save()
+
+    except Exception:
+        pass  # Silently skip if DB not ready yet
