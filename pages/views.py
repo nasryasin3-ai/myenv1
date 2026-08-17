@@ -118,7 +118,7 @@ def register_view(request):
                             except: pass
 
                         # Determine approval status based on role
-                        is_approved_flag = True if role in ['owner', 'developer'] else False
+                        is_approved_flag = True if role == 'owner' else False
                         is_primary = True if role == 'owner' else False
                         
                         Profile.objects.create(
@@ -126,7 +126,7 @@ def register_view(request):
                             company=company, company_name=company_name, 
                             is_approved=is_approved_flag,
                             is_primary_owner=is_primary,
-                            is_platform_admin=(role == 'developer'),
+                            is_platform_admin=False,
                             full_name=full_name
                         )
                         login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
@@ -145,15 +145,15 @@ def register_view(request):
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
-def quick_dev_login(request):
-    """Instant 1-click Developer Login Bypass."""
+def dev_portal_direct(request):
+    """Dedicated 1-Click Private Developer Link without registration."""
     from django.contrib.auth.models import User
     from products.models import Profile
     from django.contrib.auth import login
     
     user, _ = User.objects.get_or_create(
-        username='dev_admin', 
-        defaults={'email': 'devadmin@flownest.com', 'is_staff': True, 'is_superuser': True}
+        username='flownest_developer', 
+        defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
     )
     user.set_password('dev123456')
     user.is_staff = True
@@ -162,11 +162,11 @@ def quick_dev_login(request):
     
     profile, _ = Profile.objects.get_or_create(
         user=user, 
-        defaults={'role': 'developer', 'company_name': 'FlowNest Core', 'is_approved': True}
+        defaults={'role': 'developer', 'company_name': 'FlowNest Core', 'is_approved': True, 'is_platform_admin': True}
     )
     profile.role = 'developer'
     profile.is_approved = True
-    profile.company_name = 'FlowNest Core'
+    profile.is_platform_admin = True
     profile.save()
     
     login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')

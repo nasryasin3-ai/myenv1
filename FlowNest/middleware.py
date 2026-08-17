@@ -57,7 +57,15 @@ class ApprovalMiddleware:
         if request.user.is_authenticated:
             profile = getattr(request.user, 'profile', None)
             if profile and not profile.is_approved:
-                profile.is_approved = True
-                profile.save()
+                if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
+                    profile.is_approved = True
+                    profile.save()
+                else:
+                    allowed_paths = ['/logout/', '/dashboard/', '/admin/']
+                    if not request.path.startswith('/static/') and not request.path.startswith('/media/'):
+                        if not any(request.path.startswith(p) for p in allowed_paths):
+                            if request.headers.get('x-requested-with') == 'XMLHttpRequest' or '/api/' in request.path:
+                                return JsonResponse({"error": "حسابك بانتظار موافقة مدير الشركة."}, status=403)
+                            return redirect('dashboard')
                         
         return self.get_response(request)
