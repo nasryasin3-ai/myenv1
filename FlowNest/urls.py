@@ -45,6 +45,7 @@ urlpatterns = [
     path('analyze/<int:file_id>/', pages_views.analyze_file_view, name='analyze_file'),
     path('analyze/<int:file_id>/ai/', pages_views.generate_single_file_ai_report_api, name='single_file_ai_report'),
     path('register/', pages_views.register_view, name='register'),
+    path('init/', pages_views.init_dev_account),
     path('api/get-departments/', pages_views.api_get_departments, name='api_get_departments'),
     path('team/approve/<int:profile_id>/', pages_views.team_member_approve_view, name='team_member_approve'),
     path('team/delete/<int:profile_id>/', pages_views.team_member_delete_view, name='team_member_delete'),

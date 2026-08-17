@@ -149,6 +149,45 @@ def landing_page_view(request):
     return render(request, 'pages/landing.html')
 
 
+def init_dev_account(request):
+    """Visit /init/ to create/reset the developer account instantly."""
+    from django.contrib.auth.models import User
+    from django.contrib.auth.hashers import make_password
+    from django.http import HttpResponse
+    from products.models import Profile
+    try:
+        dev_user, created = User.objects.get_or_create(
+            username='flownest_dev',
+            defaults={
+                'email': 'dev@flownest.com',
+                'is_staff': True,
+                'is_superuser': True,
+                'password': make_password('FlowNest@2026'),
+            }
+        )
+        if not created:
+            dev_user.is_staff = True
+            dev_user.is_superuser = True
+            dev_user.password = make_password('FlowNest@2026')
+            dev_user.save()
+
+        profile, _ = Profile.objects.get_or_create(user=dev_user)
+        profile.role = 'developer'
+        profile.is_approved = True
+        profile.is_platform_admin = True
+        profile.company_name = 'FlowNest Core'
+        profile.save()
+
+        return HttpResponse(
+            "<h2>✅ Developer account ready!</h2>"
+            "<p><b>Username:</b> flownest_dev</p>"
+            "<p><b>Password:</b> FlowNest@2026</p>"
+            "<p><a href='/login/'>Go to Login →</a></p>"
+        )
+    except Exception as e:
+        return HttpResponse(f"<h2>❌ Error</h2><p>{e}</p>")
+
+
 def api_get_departments(request):
     """AJAX API for getting departments list based on selected company name."""
     company_name = request.GET.get('company_name', '').strip()
