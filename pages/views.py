@@ -151,65 +151,6 @@ def register_view(request):
     })
 
 
-from django.views.decorators.csrf import csrf_exempt
-
-@csrf_exempt
-def dev_portal_direct(request):
-    """Dedicated 1-Click Private Developer Link without registration."""
-    from django.contrib.auth.models import User
-    from products.models import Profile
-    from django.contrib.auth import login, logout
-    from django.http import HttpResponse
-    
-    try:
-        logout(request)
-        user, _ = User.objects.get_or_create(
-            username='flownest_developer', 
-            defaults={'email': 'dev@flownest.com', 'is_staff': True, 'is_superuser': True}
-        )
-        user.set_password('dev123456')
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        
-        profile, _ = Profile.objects.get_or_create(user=user)
-        profile.role = 'developer'
-        profile.is_approved = True
-        profile.is_platform_admin = True
-        profile.company_name = 'FlowNest Core'
-        profile.save()
-        
-        login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
-        return redirect('dashboard')
-    except Exception as e:
-        return HttpResponse(f"<h1>Developer Access Error</h1><p>{str(e)}</p>")
-
-@csrf_exempt
-def dev_register_view(request):
-    """Standalone Developer Portal - Restricted by Master Code."""
-    if request.method == 'POST':
-        dev_username = request.POST.get('dev_username', 'flownest_admin').strip() or 'flownest_admin'
-        
-        user, created = User.objects.get_or_create(username=dev_username)
-        user.set_password('admin12345')
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        
-        # Ensure profile exists and is developer
-        profile, _ = Profile.objects.get_or_create(user=user)
-        profile.role = 'developer'
-        profile.is_approved = True
-        profile.company_name = 'FlowNest Core'
-        profile.save()
-        
-        # Login the user directly
-        from django.contrib.auth import login
-        login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
-        
-        return redirect('dashboard')
-            
-    return render(request, 'registration/dev_register.html')
 
 
 def landing_page_view(request):
@@ -1330,6 +1271,8 @@ def account_settings_view(request):
         'success_message': success_message,
         'error_message': error_message,
     })
+
+from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def auto_setup_admin(request):
