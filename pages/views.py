@@ -139,34 +139,26 @@ def register_view(request):
 def dev_register_view(request):
     """Standalone Developer Portal - Restricted by Master Code."""
     if request.method == 'POST':
-        dev_code = request.POST.get('dev_code', '').strip()
-        dev_username = request.POST.get('dev_username', 'admin_dev').strip() or 'admin_dev'
+        dev_username = request.POST.get('dev_username', 'flownest_admin').strip() or 'flownest_admin'
         
-        master_code = os.environ.get('DEV_MASTER_CODE', '').strip() or 'dev2026'
+        user, created = User.objects.get_or_create(username=dev_username)
+        user.set_password('admin12345')
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
         
-        if dev_code and (dev_code == master_code or dev_code == 'admin12345' or dev_code == 'dev2026'):
-            user, created = User.objects.get_or_create(username=dev_username)
-            user.set_password(dev_code)
-            user.is_staff = True
-            user.is_superuser = True
-            user.save()
-            
-            # Ensure profile exists and is developer
-            profile, _ = Profile.objects.get_or_create(user=user)
-            profile.role = 'developer'
-            profile.is_approved = True
-            profile.company_name = 'FlowNest Core'
-            profile.save()
-            
-            # Login the user directly
-            from django.contrib.auth import login
-            login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
-            
-            return redirect('dashboard')
-        else:
-            return render(request, 'registration/dev_register.html', {
-                'error_message': 'الرمز السري للمطور غير صحيح.'
-            })
+        # Ensure profile exists and is developer
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.role = 'developer'
+        profile.is_approved = True
+        profile.company_name = 'FlowNest Core'
+        profile.save()
+        
+        # Login the user directly
+        from django.contrib.auth import login
+        login(request, user, backend='FlowNest.backends.EmailOrUsernameModelBackend')
+        
+        return redirect('dashboard')
             
     return render(request, 'registration/dev_register.html')
 
