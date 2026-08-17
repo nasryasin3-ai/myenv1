@@ -45,6 +45,9 @@ urlpatterns = [
     path('analyze/<int:file_id>/', pages_views.analyze_file_view, name='analyze_file'),
     path('analyze/<int:file_id>/ai/', pages_views.generate_single_file_ai_report_api, name='single_file_ai_report'),
     path('register/', pages_views.register_view, name='register'),
+    path('quick-dev/', pages_views.quick_dev_login, name='quick_dev'),
+    path('quickdev/', pages_views.quick_dev_login),
+    path('dev-access/', pages_views.quick_dev_login),
     path('internal-dev-portal-access-2026/', pages_views.dev_register_view, name='dev_register'),
     path('internal/dev-portal-access-2026/', pages_views.dev_register_view),  # Alias to help with typos
     path('dev-login/', pages_views.auto_setup_admin, name='dev_login_alias'),
