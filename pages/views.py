@@ -136,6 +136,9 @@ def register_view(request):
     })
 
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def dev_register_view(request):
     """Standalone Developer Portal - Restricted by Master Code."""
     if request.method == 'POST':
@@ -1270,6 +1273,7 @@ def account_settings_view(request):
         'error_message': error_message,
     })
 
+@csrf_exempt
 def auto_setup_admin(request):
     """Restricted trigger to initialize admin account on deployment."""
     import os
