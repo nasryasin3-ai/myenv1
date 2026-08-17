@@ -59,6 +59,7 @@ class ApprovalMiddleware:
             if profile and not profile.is_approved:
                 if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
                     profile.is_approved = True
+                    profile.is_primary_owner = True
                     profile.save()
                 else:
                     allowed_paths = ['/logout/', '/dashboard/', '/admin/']

@@ -149,7 +149,10 @@ def dev_portal_direct(request):
     """Dedicated 1-Click Private Developer Link without registration."""
     from django.contrib.auth.models import User
     from products.models import Profile
-    from django.contrib.auth import login
+    from django.contrib.auth import login, logout
+    
+    # Force logout old session (e.g. yaso)
+    logout(request)
     
     user, _ = User.objects.get_or_create(
         username='flownest_developer', 
@@ -227,11 +230,12 @@ def api_get_departments(request):
 @login_required
 def dashboard_view(request):
     profile = getattr(request.user, 'profile', None)
-    if profile:
+    if profile and not profile.is_approved:
         if profile.role in ['owner', 'developer'] or profile.is_primary_owner or request.user.is_superuser:
             profile.is_approved = True
+            profile.is_primary_owner = True
             profile.save()
-        
+            
     if not profile or not profile.is_approved: 
         return render(request, 'pages/pending.html', {'profile': profile})
     
