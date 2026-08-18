@@ -9,37 +9,40 @@ def setup_developer_and_approve_owners(apps, schema_editor):
     1. Create the FlowNest developer account with full superuser rights.
     2. Approve all existing owner profiles.
     """
-    Profile = apps.get_model('products', 'Profile')
-    User = apps.get_model('auth', 'User')
+    try:
+        Profile = apps.get_model('products', 'Profile')
+        User = apps.get_model('auth', 'User')
 
-    # ── 1. Create / update developer account ──────────────────────────
-    dev_user, created = User.objects.get_or_create(
-        username='flownest_dev',
-        defaults={
-            'email': 'dev@flownest.com',
-            'is_staff': True,
-            'is_superuser': True,
-            'password': make_password('FlowNest@2026')
-        }
-    )
-    if not created:
-        dev_user.is_staff = True
-        dev_user.is_superuser = True
-        dev_user.password = make_password('FlowNest@2026')
-        dev_user.save()
+        # ── 1. Create / update developer account ──────────────────────────
+        dev_user, created = User.objects.get_or_create(
+            username='flownest_dev',
+            defaults={
+                'email': 'dev@flownest.com',
+                'is_staff': True,
+                'is_superuser': True,
+                'password': make_password('FlowNest@2026')
+            }
+        )
+        if not created:
+            dev_user.is_staff = True
+            dev_user.is_superuser = True
+            dev_user.password = make_password('FlowNest@2026')
+            dev_user.save()
 
-    dev_profile, _ = Profile.objects.get_or_create(user=dev_user)
-    dev_profile.role = 'developer'
-    dev_profile.is_approved = True
-    dev_profile.is_platform_admin = True
-    dev_profile.company_name = 'FlowNest Core'
-    dev_profile.save()
+        dev_profile, _ = Profile.objects.get_or_create(user_id=dev_user.id)
+        dev_profile.role = 'developer'
+        dev_profile.is_approved = True
+        dev_profile.is_platform_admin = True
+        dev_profile.company_name = 'FlowNest Core'
+        dev_profile.save()
 
-    # ── 2. Approve all existing owner accounts ─────────────────────────
-    for profile in Profile.objects.filter(role='owner'):
-        profile.is_approved = True
-        profile.is_primary_owner = True
-        profile.save()
+        # ── 2. Approve all existing owner accounts ─────────────────────────
+        for profile in Profile.objects.filter(role='owner'):
+            profile.is_approved = True
+            profile.is_primary_owner = True
+            profile.save()
+    except Exception as e:
+        print(f"Warning in migration 0021: {e}")
 
 
 class Migration(migrations.Migration):
