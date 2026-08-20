@@ -57,7 +57,7 @@ class ApprovalMiddleware:
         if request.user.is_authenticated:
             profile = getattr(request.user, 'profile', None)
             if profile and not profile.is_approved:
-                if profile.role == 'owner' or profile.is_primary_owner or request.user.is_superuser:
+                if profile.role == 'developer' or request.user.is_superuser:
                     profile.is_approved = True
                     profile.save()
                 else:

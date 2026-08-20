@@ -2,31 +2,58 @@
 
 {% block content %}
 <div class="h-[80vh] flex flex-col items-center justify-center p-6 text-center animate-fade-in-up">
-    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl max-w-lg relative overflow-hidden">
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl max-w-xl relative overflow-hidden">
         <!-- Background Accents -->
         <div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] -mr-10 -mt-10"></div>
         <div class="absolute bottom-0 left-0 w-32 h-32 bg-secondary/20 rounded-full blur-[50px] -ml-10 -mb-10"></div>
         
         <div class="relative z-10 space-y-6">
-            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-yellow-500/20 text-yellow-500 mb-4 animate-bounce">
-                <i class="fas fa-hourglass-half text-5xl"></i>
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-yellow-500/20 text-yellow-400 mb-2 animate-bounce shadow-lg shadow-yellow-500/10">
+                <i class="fas fa-user-clock text-4xl"></i>
             </div>
             
-            <h1 class="text-3xl font-extrabold text-white">Your account is under review</h1>
+            <h1 class="text-3xl font-extrabold text-white">Your Account is Pending Approval</h1>
+            <h2 class="text-xl font-bold text-yellow-400">حسابك قيد المراجعة والاعتماد</h2>
             
-            <p class="text-gray-300 leading-relaxed text-lg">
-                Welcome, my friend <span class="text-primary font-bold">{{ request.user.username }}</span>. We've received your request to join a team 
-                <span class="text-primary font-bold">{{ profile.get_department_display }}</span> K <span class="font-bold text-white">{{ profile.get_role_display }}</span>.
+            <p class="text-gray-300 leading-relaxed text-base">
+                مرحباً بك <span class="text-primary font-bold">{{ request.user.username }}</span> في منصة FlowNest ERP.
             </p>
             
-            <p class="text-gray-400 text-sm">
-                The system is currently awaiting approval from your direct manager or owner to activate your account. Please wait and try again later.
-            </p>
+            {% if profile.role == 'owner' %}
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 text-amber-200 text-sm space-y-2 text-right dir-rtl">
+                <div class="flex items-center gap-2 text-amber-400 font-extrabold text-base">
+                    <i class="fas fa-crown"></i>
+                    <span>إشعار مالك الشركة (Owner):</span>
+                </div>
+                <p class="leading-relaxed">
+                    تم تسجيل حسابك كمالك لشركة <strong class="text-white">{{ profile.company_name }}</strong>. طبقاً لنظام الأمان المعتمد، يلزم اعتماد حسابك وتفعيله أولاً من قِبل مطور المنصة (Developer Admin).
+                </p>
+                <p class="text-xs text-gray-400 pt-2 border-t border-white/10 text-left dir-ltr">
+                    Your Owner account has been created. It requires approval from the Platform Developer before accessing the system.
+                </p>
+            </div>
+            {% else %}
+            <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-2xl p-5 text-indigo-200 text-sm space-y-2 text-right dir-rtl">
+                <div class="flex items-center gap-2 text-indigo-400 font-extrabold text-base">
+                    <i class="fas fa-id-badge"></i>
+                    <span>إشعار الموظف (Employee):</span>
+                </div>
+                <p class="leading-relaxed">
+                    تم تسجيل حسابك في شركة <strong class="text-white">{{ profile.company_name }}</strong> ({% if profile.department %}{{ profile.department.name }}{% else %}{{ profile.get_role_display }}{% endif %}). يلزم تفعيل حسابك من قِبل مالك الشركة (Owner).
+                </p>
+                <p class="text-xs text-gray-400 pt-2 border-t border-white/10 text-left dir-ltr">
+                    Your employee account is awaiting approval from your Company Owner.
+                </p>
+            </div>
+            {% endif %}
             
-            <div class="pt-6">
-                <a href="{% url 'logout' %}" class="inline-block bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all hover:scale-105">
-                    Temporarily log out
-                </a>
+            <div class="pt-4">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all hover:scale-105">
+                        <i class="fas fa-sign-out-alt text-red-400"></i> Log Out / تسجيل الخروج
+                    </button>
+                </form>
             </div>
         </div>
     </div>

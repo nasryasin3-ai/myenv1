@@ -120,7 +120,7 @@ def register_view(request):
                         Profile.objects.create(
                             user=user, department=dept_obj, role=role, 
                             company=company, company_name=company_name, 
-                            is_approved=(role == 'owner'),
+                            is_approved=False,
                             is_primary_owner=(role == 'owner'),
                             is_platform_admin=False,
                             full_name=full_name
@@ -206,11 +206,9 @@ def api_get_departments(request):
 @login_required
 def dashboard_view(request):
     profile = getattr(request.user, 'profile', None)
-    if profile and not profile.is_approved:
-        # Auto-approve owners on first login
-        if profile.role == 'owner' or profile.is_primary_owner:
-            profile.is_approved = True
-            profile.save()
+    if profile and profile.role == 'developer' and not profile.is_approved:
+        profile.is_approved = True
+        profile.save()
 
     if not profile or not profile.is_approved:
         return render(request, 'pages/pending.html', {'profile': profile})
@@ -629,15 +627,14 @@ def approvals_view(request):
             # Developer approves ALL Owners
             if target_profile.role == 'owner':
                 can_approve = True
-        elif profile.role == 'owner' and target_profile.company_name == profile.company_name:
-            # Owner approves Secondary Owners and Managers
-            if target_profile.role == 'owner' and not target_profile.is_primary_owner:
-                can_approve = True
-            elif target_profile.role == 'manager':
-                can_approve = True
-        elif profile.role == 'manager' and target_profile.company_name == profile.company_name:
+        elif profile.role == 'owner':
+            # Owner approves secondary owners, managers, and employees in their company
+            if target_profile.company == profile.company or target_profile.company_name == profile.company_name:
+                if target_profile.pk != profile.pk and (not target_profile.is_primary_owner or target_profile.role != 'owner'):
+                    can_approve = True
+        elif profile.role == 'manager':
             # Manager approves Engineers in their department
-            if target_profile.role == 'engineer' and target_profile.department == profile.department:
+            if (target_profile.company == profile.company or target_profile.company_name == profile.company_name) and target_profile.role == 'engineer' and target_profile.department == profile.department:
                 can_approve = True
 
         if not can_approve:
@@ -654,13 +651,16 @@ def approvals_view(request):
         # Show ALL Owners waiting for approval
         pending_users = Profile.objects.filter(role='owner', is_approved=False)
     elif profile.role == 'owner':
-        pending_users = Profile.objects.filter(
-            company=profile.company,
-            role__in=['owner', 'manager'],
-            is_approved=False
-        ).filter(Q(is_primary_owner=False) | Q(role='manager')).exclude(pk=profile.pk)
+        # Show ALL members in their company waiting for approval
+        if profile.company:
+            pending_users = Profile.objects.filter(company=profile.company, is_approved=False).exclude(pk=profile.pk)
+        else:
+            pending_users = Profile.objects.filter(company_name=profile.company_name, is_approved=False).exclude(pk=profile.pk)
     else: # Manager
-        pending_users = Profile.objects.filter(company=profile.company, department=profile.department, role='engineer', is_approved=False)
+        if profile.company:
+            pending_users = Profile.objects.filter(company=profile.company, department=profile.department, role='engineer', is_approved=False)
+        else:
+            pending_users = Profile.objects.filter(company_name=profile.company_name, department=profile.department, role='engineer', is_approved=False)
 
     return render(request, 'pages/approvals.html', {'profile': profile, 'pending_users': pending_users})
 
