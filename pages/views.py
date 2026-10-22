@@ -1712,7 +1712,7 @@ def smart_action_api(request, dept_id):
                 prompt = f"أنت محلل مالي خبير. قم بإعطاء 3 نصائح متقدمة ومباشرة لتحسين التدفق النقدي وتقليل النفقات في شركة {profile.company.name}. اكتب باللغة العربية بشكل احترافي ومختصر."
                 chat_completion = client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
-                    model="llama3-8b-8192",
+                    model=dj_settings.GROQ_MODEL,
                     temperature=0.4,
                     max_tokens=256
                 )
@@ -1828,7 +1828,7 @@ def smart_action_api(request, dept_id):
                     prompt = f"أنت مستشار أعمال ذكي. مدير قسم {dept.name} يطلب منك تقرير أو نصيحة استراتيجية سريعة بخصوص: {focus_area}. اكتب نصيحة عملية في 3 أسطر باللغة العربية بناءً على سياق الإدارة."
                     chat_completion = client.chat.completions.create(
                         messages=[{"role": "user", "content": prompt}],
-                        model="llama3-8b-8192",
+                        model=dj_settings.GROQ_MODEL,
                         temperature=0.7,
                         max_tokens=256
                     )
@@ -1863,7 +1863,7 @@ def smart_action_api(request, dept_id):
                 prompt = f"أنت خبير إداري وذكاء اصطناعي. تم تسجيل إجراء جديد في إدارة {dept.name} بعنوان '{title}' ووصفه '{description}'. قم بإعطاء نصيحة استراتيجية واحدة مختصرة أو تحليل سريع لهذا الإجراء باللغة العربية في سطر واحد."
                 chat_completion = client.chat.completions.create(
                     messages=[{"role": "user", "content": prompt}],
-                    model="llama3-8b-8192",
+                    model=dj_settings.GROQ_MODEL,
                     temperature=0.5,
                     max_tokens=100
                 )

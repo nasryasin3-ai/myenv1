@@ -164,7 +164,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 # ── AI Keys (Google Gemini, Groq & Daily.co) ───────────────────────
 GOOGLE_API_KEY = config('GOOGLE_API_KEY', default='').strip()
 GROQ_API_KEY   = config('GROQ_API_KEY', default='').strip()
-GROQ_MODEL     = config('GROQ_MODEL', default='llama-3.3-70b-versatile')
+GROQ_MODEL     = config('GROQ_MODEL', default='qwen/qwen3.8-27b')
 DAILY_API_KEY  = config('DAILY_API_KEY', default='').strip()   # ← ضع هنا Daily.co API Key
 # ─── Security & AI Optimization ──────────────────────────────────
 import os
