@@ -8,10 +8,10 @@
             <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
                 📋 Task board
             </h1>
-            <p class="text-gray-400 text-sm mt-1">Track the tasks required of you and the tasks you have assigned to the team</p>
+            <p class="text-slate-500 text-sm mt-1">Track the tasks required of you and the tasks you have assigned to the team</p>
         </div>
         <button onclick="openTaskModal()"
-            class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg transition-all hover:scale-105 flex items-center gap-2 text-sm">
+            class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-slate-900 font-bold py-2.5 px-5 rounded-xl shadow-lg transition-all hover:scale-105 flex items-center gap-2 text-sm">
             <i class="fas fa-plus"></i> New mission
         </button>
     </div>
@@ -19,14 +19,14 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <!-- MY TASKS (tasks assigned to me) -->
-        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl overflow-hidden">
-            <div class="p-5 border-b border-white/10 flex items-center gap-3">
+        <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex items-center gap-3">
                 <div class="w-9 h-9 bg-indigo-500/20 rounded-xl flex items-center justify-center">
                     <i class="fas fa-user-check text-indigo-400"></i>
                 </div>
                 <div>
-                    <h2 class="font-bold text-white">My tasks</h2>
-                    <p class="text-xs text-gray-500">The tasks required of you</p>
+                    <h2 class="font-bold text-slate-900">My tasks</h2>
+                    <p class="text-xs text-slate-400">The tasks required of you</p>
                 </div>
                 <span class="mr-auto bg-indigo-500/20 text-indigo-300 text-xs font-bold px-2 py-1 rounded-full">
                     {{ tasks_my|length }}
@@ -34,13 +34,13 @@
             </div>
             <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto">
                 {% if not tasks_my %}
-                <div class="text-center text-gray-600 py-8">
+                <div class="text-center text-slate-400 py-8">
                     <i class="fas fa-check-circle text-3xl mb-2 opacity-30"></i>
                     <p class="text-sm">There are no pending tasks 🎉</p>
                 </div>
                 {% endif %}
                 {% for task in tasks_my %}
-                <div class="bg-black/30 border border-white/5 rounded-2xl p-4 hover:border-indigo-500/30 transition-all group" id="task-card-{{ task.id }}">
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 shadow-sm hover:bg-white hover:border-indigo-300 transition-all hover:border-indigo-500/30 transition-all group" id="task-card-{{ task.id }}">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
@@ -56,16 +56,16 @@
                                 <span class="text-xs px-2 py-0.5 rounded-full
                                     {% if task.status == 'done' %}bg-green-500/20 text-green-400
                                     {% elif task.status == 'in_progress' %}bg-blue-500/20 text-blue-400
-                                    {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                                    {% else %}bg-gray-500/20 text-slate-500{% endif %}">
                                     {% if task.status == 'done' %}✅{% elif task.status == 'in_progress' %}⏳{% else %}🕐{% endif %}
                                     {{ task.get_status_display }}
                                 </span>
                             </div>
-                            <h3 class="font-bold text-white mt-1.5 text-sm">{{ task.title }}</h3>
+                            <h3 class="font-bold text-slate-900 mt-1.5 text-sm">{{ task.title }}</h3>
                             {% if task.description %}
-                            <p class="text-gray-400 text-xs mt-1 leading-relaxed">{{ task.description }}</p>
+                            <p class="text-slate-500 text-xs mt-1 leading-relaxed">{{ task.description }}</p>
                             {% endif %}
-                            <div class="flex items-center gap-3 mt-2 text-xs text-gray-600">
+                            <div class="flex items-center gap-3 mt-2 text-xs text-slate-400">
                                 <span><i class="fas fa-user ml-1"></i>Who: {{ task.assigned_by.get_full_name|default:task.assigned_by.username }}</span>
                                 {% if task.due_date %}
                                 <span><i class="fas fa-calendar ml-1"></i>{{ task.due_date }}</span>
@@ -79,12 +79,12 @@
                     <div class="flex gap-2 mt-3">
                         {% if task.status == 'pending' %}
                         <button onclick="updateTaskStatus({{ task.id }}, 'in_progress')"
-                            class="flex-1 text-xs bg-blue-500/20 hover:bg-blue-500/40 border border-blue-500/20 text-blue-300 py-1.5 rounded-lg transition-all">
+                            class="flex-1 text-xs bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-semibold py-1.5 rounded-lg transition-all">
                             <i class="fas fa-play ml-1"></i> Start implementation
                         </button>
                         {% endif %}
                         <button onclick="updateTaskStatus({{ task.id }}, 'done')"
-                            class="flex-1 text-xs bg-green-500/20 hover:bg-green-500/40 border border-green-500/20 text-green-300 py-1.5 rounded-lg transition-all">
+                            class="flex-1 text-xs bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-semibold py-1.5 rounded-lg transition-all">
                             <i class="fas fa-check ml-1"></i> Accomplished
                         </button>
                     </div>
@@ -100,14 +100,14 @@
 
         <!-- TASKS I ASSIGNED (manager/owner view) -->
         {% if profile.role == 'owner' or profile.role == 'developer' or profile.role == 'manager' %}
-        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-xl overflow-hidden">
-            <div class="p-5 border-b border-white/10 flex items-center gap-3">
+        <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex items-center gap-3">
                 <div class="w-9 h-9 bg-yellow-500/20 rounded-xl flex items-center justify-center">
                     <i class="fas fa-clipboard-list text-yellow-400"></i>
                 </div>
                 <div>
-                    <h2 class="font-bold text-white">Team tasks</h2>
-                    <p class="text-xs text-gray-500">The tasks you assigned to the team</p>
+                    <h2 class="font-bold text-slate-900">Team tasks</h2>
+                    <p class="text-xs text-slate-400">The tasks you assigned to the team</p>
                 </div>
                 <span class="mr-auto bg-yellow-500/20 text-yellow-300 text-xs font-bold px-2 py-1 rounded-full">
                     {{ tasks_assigned|length }}
@@ -115,13 +115,13 @@
             </div>
             <div class="p-4 space-y-3 max-h-[500px] overflow-y-auto">
                 {% if not tasks_assigned %}
-                <div class="text-center text-gray-600 py-8">
+                <div class="text-center text-slate-400 py-8">
                     <i class="fas fa-tasks text-3xl mb-2 opacity-30"></i>
                     <p class="text-sm">No assignments have been submitted yet</p>
                 </div>
                 {% endif %}
                 {% for task in tasks_assigned %}
-                <div class="bg-black/30 border border-white/5 rounded-2xl p-4 hover:border-yellow-500/20 transition-all" id="team-task-{{ task.id }}">
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 shadow-sm hover:bg-white hover:border-indigo-300 transition-all hover:border-yellow-500/20 transition-all" id="team-task-{{ task.id }}">
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap mb-1">
@@ -134,17 +134,17 @@
                                 <span class="text-xs px-2 py-0.5 rounded-full
                                     {% if task.status == 'done' %}bg-green-500/20 text-green-400
                                     {% elif task.status == 'in_progress' %}bg-blue-500/20 text-blue-400
-                                    {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                                    {% else %}bg-gray-500/20 text-slate-500{% endif %}">
                                     {% if task.status == 'done' %}✅ Complete
                                     {% elif task.status == 'in_progress' %}⏳ My neighbor
                                     {% else %}🕐 On hold{% endif %}
                                 </span>
                             </div>
-                            <h3 class="font-bold text-white text-sm">{{ task.title }}</h3>
+                            <h3 class="font-bold text-slate-900 text-sm">{{ task.title }}</h3>
                             {% if task.description %}
-                            <p class="text-gray-400 text-xs mt-0.5">{{ task.description }}</p>
+                            <p class="text-slate-500 text-xs mt-0.5">{{ task.description }}</p>
                             {% endif %}
-                            <div class="flex items-center gap-3 mt-1.5 text-xs text-gray-600">
+                            <div class="flex items-center gap-3 mt-1.5 text-xs text-slate-400">
                                 <span><i class="fas fa-user ml-1 text-indigo-400"></i>
                                     {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
                                 </span>
@@ -177,50 +177,50 @@
 <!-- Task creation modal -->
 <div id="task-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeTaskModal()"></div>
-    <div class="relative bg-gray-900 border border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl z-10">
+    <div class="relative bg-white border border-slate-200 rounded-3xl p-6 w-full max-w-md shadow-2xl z-10">
         <div class="flex items-center justify-between mb-5">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <i class="fas fa-tasks text-yellow-400"></i> Create a new task
             </h3>
-            <button onclick="closeTaskModal()" class="text-gray-400 hover:text-white">
+            <button onclick="closeTaskModal()" class="text-slate-500 hover:text-slate-900">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <form id="task-form" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Task title *</label>
+                <label class="block text-sm font-bold text-slate-700 mb-1">Task title *</label>
                 <input type="text" id="task-title" required
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-slate-900 text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all"
                     placeholder="Brief title of the task">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Details</label>
+                <label class="block text-sm font-bold text-slate-700 mb-1">Details</label>
                 <textarea id="task-desc" rows="3"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-slate-900 text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none"
                     placeholder="Describe the required task in detail..."></textarea>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Designated employee *</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Designated employee *</label>
                     <div class="flex flex-col gap-2">
                         <label class="flex items-center gap-2 text-xs text-yellow-500 cursor-pointer bg-yellow-500/10 p-2 rounded-lg border border-yellow-500/20">
                             <input type="checkbox" id="task-all-toggle" onchange="toggleAllAssignees()" class="checkbox checkbox-xs checkbox-warning">
                             <span>✅ Attribution for all (Broadcast to All)</span>
                         </label>
                         <select id="task-assignee" multiple required
-                            class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 custom-scroll opacity-100 transition-opacity"
+                            class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-indigo-500 custom-scroll opacity-100 transition-opacity"
                             style="min-height: 100px;">
                             {% for u in company_users %}
                             <option value="{{ u.id }}">{{ u.get_full_name|default:u.username }} ({{ u.profile.get_role_display }})</option>
                             {% endfor %}
                         </select>
-                        <p class="text-[9px] text-gray-500">Use Ctrl + Click For multiple selection</p>
+                        <p class="text-[9px] text-slate-400">Use Ctrl + Click For multiple selection</p>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Priority</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Priority</label>
                     <select id="task-priority"
-                        class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-indigo-500">
                         <option value="low">🟢 Low</option>
                         <option value="medium" selected>🟡 Medium</option>
                         <option value="high">🔴 High</option>
@@ -228,12 +228,12 @@
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">End date</label>
+                <label class="block text-sm font-bold text-slate-700 mb-1">End date</label>
                 <input type="date" id="task-due"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <button type="submit"
-                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-3 rounded-xl transition-all hover:scale-[1.02] flex items-center justify-center gap-2">
+                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-slate-900 font-bold py-3 rounded-xl transition-all hover:scale-[1.02] flex items-center justify-center gap-2">
                 <i class="fas fa-paper-plane"></i> Submit task
             </button>
         </form>

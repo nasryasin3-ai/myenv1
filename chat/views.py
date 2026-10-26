@@ -405,11 +405,14 @@ def summarize_call_api(request):
             transcript = data.get('transcript', '').strip()
             room_name = data.get('room_name', 'general')
 
-            if not transcript:
-                return JsonResponse({'summary': '', 'tasks': []})
+            if not transcript or len(transcript) < 5:
+                return JsonResponse({'error': 'النص المقدم للتلخيص قصير جداً (يرجى التحدث بوضوح أو إدخال نص كافٍ)'}, status=400)
 
             from django.conf import settings as dj_settings
             from groq import Groq
+
+            if not getattr(dj_settings, 'GROQ_API_KEY', None):
+                return JsonResponse({'error': 'مفتاح الذكاء الاصطناعي GROQ_API_KEY غير مهيأ'}, status=500)
 
             client = Groq(api_key=dj_settings.GROQ_API_KEY, timeout=30.0)
             prompt = (
@@ -433,7 +436,8 @@ def summarize_call_api(request):
 
             result_json = json.loads(chat_completion.choices[0].message.content)
             summary = result_json.get('summary', '')
-            tasks = result_json.get('tasks', [])
+            raw_tasks = result_json.get('tasks', [])
+            tasks = raw_tasks if isinstance(raw_tasks, list) else ([raw_tasks] if raw_tasks else [])
 
             profile = request.user.profile
 
@@ -449,9 +453,9 @@ def summarize_call_api(request):
 
             # 2. Save Tasks
             for t in tasks:
-                if t:
+                if t and isinstance(t, str):
                     Task.objects.create(
-                        title=t,
+                        title=t[:200],
                         assigned_to=request.user,
                         assigned_by=request.user,
                         company=profile.company,

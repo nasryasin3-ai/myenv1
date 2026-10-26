@@ -31,16 +31,14 @@
         }
     </script>
 
-    <style>
+        <style>
         :root {
-            --bg-main: #0f111a;
-            --bg-panel: rgba(30, 30, 47, 0.6);
-            --border-col: rgba(255, 255, 255, 0.05);
-            --text-main: #f8fafc;
-            --text-muted: #9ca3af;
+            --bg-main: #f8fafc;
+            --bg-panel: #ffffff;
+            --border-col: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
-
-
 
         body {
             background-color: var(--bg-main);
@@ -50,19 +48,19 @@
         }
 
         .glass-panel {
-            background: var(--bg-panel);
-            backdrop-filter: blur(16px);
+            background: #ffffff;
             border: 1px solid var(--border-col);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
 
         .nav-link {
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
         .nav-link:hover {
-            background: rgba(99, 102, 241, 0.1);
-            transform: translateX(4px);
-            color: #6366f1;
+            background: #f1f5f9;
+            transform: translateX(3px);
+            color: #4f46e5;
         }
 
         #settings-panel {
@@ -74,8 +72,8 @@
             z-index: 200;
             transform: translateX(110%);
             transition: 0.35s;
-            background: var(--bg-panel);
-            backdrop-filter: blur(20px);
+            background: #ffffff;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
             border-left: 1px solid var(--border-col);
             padding: 1.5rem;
         }
@@ -87,14 +85,14 @@
         .toggle-pill {
             width: 48px;
             height: 26px;
-            background: #374151;
+            background: #e2e8f0;
             border-radius: 999px;
             position: relative;
             cursor: pointer;
         }
 
         .toggle-pill.on {
-            background: #6366f1;
+            background: #4f46e5;
         }
 
         .toggle-pill::after {
@@ -106,6 +104,7 @@
             height: 20px;
             background: #fff;
             border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
             transition: 0.25s;
         }
 
@@ -117,12 +116,11 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.4);
             z-index: 45;
             backdrop-filter: blur(4px);
         }
 
-        /* Mobile Adjustments */
         @media (max-width: 1024px) {
             #main-content {
                 height: auto !important;
@@ -153,7 +151,7 @@
                 {% else %}<i class="fas fa-info-circle"></i>{% endif %}
             </div>
             <div class="flex-1">
-                <p class="text-sm font-bold text-white leading-tight">{{ message }}</p>
+                <p class="text-sm font-bold text-slate-900 leading-tight">{{ message }}</p>
             </div>
             <button onclick="this.parentElement.remove()" class="text-gray-500 hover:text-white transition-colors">
                 <i class="fas fa-times"></i>
@@ -171,20 +169,20 @@
     </script>
     {% endif %}
 
-    <!-- Global Persistence Shield Alert -->
+    <!-- Global Persistence Shield Alert (Light Mode, positioned at bottom-right away from navigation) -->
     {% if profile.role == 'owner' or profile.role == 'developer' %}
     {% if not is_persistent %}
-    <div class="fixed top-24 left-6 z-[1000] max-w-xs animate-fade-in" id="persistence-warning-popup">
-        <div class="bg-red-500/20 backdrop-blur-xl border border-red-500/30 p-4 rounded-2xl shadow-2xl flex gap-3 relative">
-            <button onclick="document.getElementById('persistence-warning-popup').remove();" class="absolute -top-2 -right-2 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-[10px] text-gray-400">
+    <div class="fixed bottom-6 right-6 z-[1000] max-w-sm animate-fade-in" id="persistence-warning-popup">
+        <div class="bg-white border-2 border-rose-200 p-4 rounded-2xl shadow-xl flex gap-3.5 relative">
+            <button onclick="document.getElementById('persistence-warning-popup').remove();" class="absolute -top-2 -right-2 w-6 h-6 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 rounded-full flex items-center justify-center text-xs shadow-sm transition-all" title="Close">
                 <i class="fas fa-times"></i>
             </button>
-            <div class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white text-lg shadow-lg shadow-red-500/40">
-                <i class="fas fa-shield-alt"></i>
+            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg shrink-0">
+                <i class="fas fa-shield-halved"></i>
             </div>
             <div class="flex-1">
-                <h4 class="text-xs font-black text-white uppercase tracking-widest mb-1">Data security alert</h4>
-                <p class="text-[10px] text-gray-400 font-bold leading-relaxed">Your system is running in a temporary environment. Files may be deleted upon any update. See <a href="{% url 'health_center' %}" class="text-indigo-400 underline">Health Center</a></p>
+                <h4 class="text-xs font-black text-rose-700 uppercase tracking-wider mb-1">Data security alert</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">Your system is running in a temporary environment. Files may be deleted upon any update. <a href="{% url 'health_center' %}" class="text-indigo-600 font-bold hover:underline">Health Center</a></p>
             </div>
         </div>
     </div>
@@ -233,85 +231,103 @@
     <!-- ─── Sidebar ─────────────────────────────────────────────── -->
     {% if user.is_authenticated %}
     <aside id="sidebar-drawer"
-        class="w-72 glass-panel flex flex-col h-screen fixed top-0 left-0 z-50 border-r transform transition-transform duration-300 lg:translate-x-0 -translate-x-full lg:flex hidden"
-        style="border-color:var(--border-col)">
-        <div class="p-6 text-center border-b" style="border-color:var(--border-col)">
+        class="w-72 bg-white flex flex-col h-screen fixed top-0 left-0 z-50 border-r border-slate-200 transform transition-transform duration-300 lg:translate-x-0 -translate-x-full lg:flex hidden shadow-sm">
+        <div class="p-6 text-center border-b border-slate-200">
             <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                 FlowNest ERP</h2>
 
-            <div class="mt-2 text-xs font-bold text-indigo-400 flex items-center justify-center gap-2">
+            <div class="mt-2 text-xs font-semibold text-slate-500 flex items-center justify-center gap-2">
                 <span>{{ user.username }} · {{ user.profile.get_role_display }}</span>
-                <a href="{% url 'account_settings' %}" class="hover:text-white transition-colors" title="Account settings">
+                <a href="{% url 'account_settings' %}" class="text-slate-400 hover:text-indigo-600 transition-colors" title="Account settings">
                     <i class="fas fa-cog"></i>
                 </a>
             </div>
         </div>
-        <nav class="flex-1 overflow-y-auto w-full p-4 space-y-1">
+        <nav class="flex-1 overflow-y-auto w-full p-4 space-y-1.5">
             <!-- Admin -->
             {% if user.profile.role == 'owner' or user.profile.role == 'manager' or user.profile.role == 'developer' %}
-            <div class="text-[10px] uppercase tracking-widest font-bold text-gray-500 px-3 mb-2 mt-4">Management</div>
+            <div class="text-[11px] uppercase tracking-wider font-bold text-slate-400 px-3 pt-2 pb-1">Management</div>
             <a href="{% url 'approvals' %}"
-                class="nav-link flex items-center p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-2">
-                <i class="fas fa-check-circle w-6 ml-3 text-indigo-400"></i>
-                <span class="font-bold">Approvals panel</span>
+                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/70 border border-indigo-100 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-check-circle text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Approvals panel</span>
             </a>
             <a href="{% url 'activity_log' %}"
-                class="nav-link flex items-center p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-2">
-                <i class="fas fa-list-alt w-6 ml-3 text-indigo-400"></i>
-                <span class="font-bold">Activity log (Audit Log)</span>
+                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-50/70 hover:bg-blue-100/70 border border-blue-100 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-clipboard-list text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Activity log (Audit Log)</span>
             </a>
             <a href="{% url 'team_list' %}"
-                class="nav-link flex items-center p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 mb-2">
-                <i class="fas fa-users w-6 ml-3 text-indigo-400"></i>
-                <span class="font-bold">Team guide</span>
+                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-sky-50/70 hover:bg-sky-100/70 border border-sky-100 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-users text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Team guide</span>
             </a>
             <a href="{% url 'health_center' %}"
-
-                class="nav-link flex items-center p-3 rounded-xl bg-red-500/5 border border-red-500/10 mb-2 hover:bg-red-500/10 transition-all">
-                <i class="fas fa-shield-virus w-6 ml-3 text-red-400"></i>
-                <span class="font-bold text-red-500/80">Health Center</span>
+                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-rose-50/70 hover:bg-rose-100/70 border border-rose-100 text-rose-700">
+                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-shield-virus text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Health Center</span>
             </a>
             {% endif %}
 
-            <div class="text-[10px] uppercase tracking-widest font-bold text-gray-500 px-3 mb-2 mt-4">Tools</div>
+            <div class="text-[11px] uppercase tracking-wider font-bold text-slate-400 px-3 pt-3 pb-1">Tools</div>
             <a href="{% url 'upload_center' %}"
-                class="nav-link flex items-center p-3 rounded-xl bg-primary/10 border border-primary/20 mb-2">
-                <i class="fas fa-cloud-upload-alt w-6 ml-3 text-primary"></i>
-                <span class="font-bold">Data upload center</span>
+                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-violet-50/70 hover:bg-violet-100/70 border border-violet-100 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-cloud-arrow-up text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Data upload center</span>
             </a>
 
             <!-- Core -->
-            <div class="text-[10px] uppercase tracking-widest font-bold text-gray-500 px-3 mb-2 mt-4">Home</div>
-            <a href="{% url 'dashboard' %}" class="nav-link flex items-center p-3 rounded-xl"><i
-                    class="fas fa-home w-6 ml-3"></i><span class="font-semibold">Home</span></a>
-            <a href="{% url 'rag:chat' %}" class="nav-link flex items-center p-3 rounded-xl"><i
-                    class="fas fa-robot w-6 ml-3 text-purple-400"></i><span class="font-semibold">Assistant
-                    Smart</span></a>
-
-            <a href="{% url 'chat:room' 'general' %}" class="nav-link flex items-center p-3 rounded-xl">
-                <i class="fas fa-comments w-6 ml-3 text-pink-400"></i>
-                <span class="font-semibold">Public debate</span>
+            <div class="text-[11px] uppercase tracking-wider font-bold text-slate-400 px-3 pt-3 pb-1">Home</div>
+            <a href="{% url 'dashboard' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-house text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Home</span>
+            </a>
+            <a href="{% url 'rag:chat' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-purple-50 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-robot text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Smart Assistant</span>
             </a>
 
-            <a href="{% url 'chat:task_list' %}" class="nav-link flex items-center p-3 rounded-xl">
-                <i class="fas fa-tasks w-6 ml-3 text-yellow-400"></i>
-                <span class="font-semibold">Task board</span>
+            <a href="{% url 'chat:room' 'general' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-pink-50 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-comments text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Public debate</span>
             </a>
 
+            <a href="{% url 'chat:task_list' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-list-check text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Task board</span>
+            </a>
 
             <!-- Financial Guard Alerts (Sidebar) -->
             {% if sidebar_alerts %}
-            <div class="text-[10px] uppercase tracking-widest font-bold text-red-500 px-3 mb-2 mt-6 flex items-center gap-2">
-                <i class="fas fa-shield-alt"></i> Flow guard
+            <div class="text-[11px] uppercase tracking-wider font-bold text-rose-500 px-3 pt-3 pb-1 flex items-center gap-2">
+                <i class="fas fa-shield-halved text-xs"></i> Flow guard
             </div>
-            <div class="space-y-2 px-2">
+            <div class="space-y-2 px-1">
                 {% for alert in sidebar_alerts %}
-                <div class="p-3 rounded-xl bg-red-500/5 border border-red-500/10 text-[11px] relative overflow-hidden group">
-                    <div class="font-bold text-red-400 mb-1 flex justify-between">
+                <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs">
+                    <div class="font-bold text-rose-700 mb-1 flex justify-between">
                         <span>{{ alert.project.name }}</span>
                         <span>{{ alert.percent }}%</span>
                     </div>
-                    <p class="text-gray-400 leading-tight">{{ alert.message|truncatechars:60 }}</p>
+                    <p class="text-slate-600 leading-tight">{{ alert.message|truncatechars:60 }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -319,48 +335,55 @@
 
             <!-- Analysis/Monitoring -->
             {% if user.profile.role == 'owner' or user.profile.role == 'manager' %}
-            <div class="text-[10px] uppercase tracking-widest font-bold text-emerald-500 px-3 mb-2 mt-6 flex items-center gap-2">
-                <i class="fas fa-chart-line"></i> Monitoring and analysis
+            <div class="text-[11px] uppercase tracking-wider font-bold text-emerald-600 px-3 pt-3 pb-1 flex items-center gap-2">
+                <i class="fas fa-chart-line text-xs"></i> Monitoring and analysis
             </div>
             
-            {# TEMPORARY: Allow all roles to see during debug to confirm visibility #}
             {% if user.is_authenticated %}
-            <a href="{% url 'flownest' %}" class="nav-link flex items-center p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-2 group transition-all" onclick="toggleMobileSidebar()">
-                <i class="fas fa-microchip w-6 ml-3 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                <span class="font-bold text-emerald-400">Advanced financial analysis (FlowNest AI)</span>
+            <a href="{% url 'flownest' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-100 text-emerald-700" onclick="toggleMobileSidebar()">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <i class="fas fa-microchip text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">FlowNest AI Analysis</span>
             </a>
             {% endif %}
 
-            <a href="{% url 'reports' %}" class="nav-link flex items-center p-3 rounded-xl"><i
-                    class="fas fa-chart-pie w-6 ml-3 text-yellow-400"></i><span class="font-semibold">Reports
-                    Performance</span></a>
+            <a href="{% url 'reports' %}" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-slate-700">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <i class="fas fa-chart-pie text-sm"></i>
+                </div>
+                <span class="font-semibold text-sm">Reports Performance</span>
+            </a>
             {% endif %}
         </nav>
-            <div class="p-4 bg-white/5 rounded-2xl border border-white/5 mb-4">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] text-gray-500 font-black uppercase tracking-tight">Status</span>
-                    <span class="text-[9px] text-gray-400 font-bold opacity-40">{{ build_version }}</span>
+
+        <div class="p-4 border-t border-slate-200 mt-auto">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 mb-3">
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Status</span>
+                    <span class="text-[9px] text-slate-400 font-semibold">{{ build_version }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     {% if is_persistent %}
-                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span class="text-[11px] font-black text-green-400 uppercase">Safe storage: effective</span>
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-[11px] font-bold text-emerald-700 uppercase">Safe storage: effective</span>
                     {% else %}
-                    <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                    <span class="text-[11px] font-black text-yellow-400 uppercase">Temporary storage</span>
+                    <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                    <span class="text-[11px] font-bold text-amber-700 uppercase">Temporary storage</span>
                     {% endif %}
                 </div>
             </div>
             <form action="{% url 'logout' %}" method="post">{% csrf_token %}
-                <button type="submit" class="w-full btn btn-ghost text-red-400 justify-start"><i
-                        class="fas fa-sign-out-alt ml-2"></i> Exit</button>
+                <button type="submit" class="w-full btn btn-sm btn-ghost text-rose-600 hover:bg-rose-50 justify-start font-semibold">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Exit
+                </button>
             </form>
         </div>
     </aside>
     {% endif %}
 
     <main
-        class="flex-1 {% if user.is_authenticated %}lg:ml-80{% endif %} min-h-screen bg-black/10 p-4 md:p-8"
+        class="flex-1 {% if user.is_authenticated %}lg:ml-72{% endif %} min-h-screen bg-[#f8fafc] p-4 md:p-8"
         id="main-content">
         <div class="max-w-[1600px] mx-auto">{% block content %}{% endblock %}</div>
     </main>

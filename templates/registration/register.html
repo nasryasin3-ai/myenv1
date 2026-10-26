@@ -6,17 +6,17 @@
 {% endcomment %}
 {% block content %}
 <div class="flex items-center justify-center min-h-[85vh] py-8">
-    <div class="w-full max-w-2xl bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 md:p-10">
+    <div class="w-full max-w-2xl bg-white/5 backdrop-blur-xl border border-slate-300 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 md:p-10">
         
         <!-- Progress Steps -->
         <div class="flex items-center justify-center gap-2 mb-6">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-black">1</div>
-                <span class="text-sm font-bold text-white">Create account</span>
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-slate-900 text-xs font-black">1</div>
+                <span class="text-sm font-bold text-slate-900">Create account</span>
             </div>
             <div class="h-px w-10 bg-white/10"></div>
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 text-xs font-black">2</div>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-500 text-xs font-black">2</div>
                 <span class="text-sm font-bold text-gray-500">Activate the company</span>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-2">
                 <i class="fas fa-user-plus text-primary mr-2"></i> Create a new account
             </h2>
-            <p class="text-gray-400">Join FlowNest ERP And start your free trial for a period 7 Whole days — <span class="text-emerald-400 font-bold">Without a bank card</span></p>
+            <p class="text-slate-500">Join FlowNest ERP And start your free trial for a period 7 Whole days — <span class="text-emerald-400 font-bold">Without a bank card</span></p>
         </div>
 
         <form method="post" class="space-y-6">
@@ -57,30 +57,30 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- User Identity Section -->
                 <div class="space-y-2 col-span-1 md:col-span-2">
-                    <label class="block text-sm font-black text-gray-300">Full name</label>
-                    <input type="text" id="full_name_input" name="full_name" value="{{ request.POST.full_name|default:'' }}" required placeholder="Enter your full name here" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                    <label class="block text-sm font-black text-slate-700">Full name</label>
+                    <input type="text" id="full_name_input" name="full_name" value="{{ request.POST.full_name|default:'' }}" required placeholder="Enter your full name here" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
                 </div>
 
                 <div class="space-y-2 col-span-1 md:col-span-2">
-                    <label class="block text-sm font-black text-gray-300">Email address (البريد الإلكتروني)</label>
-                    <input type="email" id="email_input" name="email" value="{{ request.POST.email|default:'' }}" required placeholder="name@example.com" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                    <label class="block text-sm font-black text-slate-700">Email address (البريد الإلكتروني)</label>
+                    <input type="email" id="email_input" name="email" value="{{ request.POST.email|default:'' }}" required placeholder="name@example.com" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
                 </div>
 
                 <!-- Django Native Fields (Username will be auto-filled) -->
                 <div class="space-y-2 col-span-1 md:col-span-2 hidden">
-                    <label class="block text-sm font-medium text-gray-300">Username (for login only)</label>
+                    <label class="block text-sm font-medium text-slate-700">Username (for login only)</label>
                     {{ form.username }}
                 </div>
                 
                 <div class="space-y-2 col-span-1 md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-300">Password</label>
+                    <label class="block text-sm font-medium text-slate-700">Password</label>
                     {{ form.password }}
                 </div>
 
                 {% for field in form %}
                     {% if field.name != 'username' and field.name != 'password' %}
                     <div class="space-y-2 col-span-1 md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-300">{{ field.label }}</label>
+                        <label class="block text-sm font-medium text-slate-700">{{ field.label }}</label>
                         {{ field }}
                         {% if field.errors %}
                             <div class="text-red-400 text-xs mt-1">{{ field.errors.0 }}</div>
@@ -90,8 +90,8 @@
                 {% endfor %}
                 
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-300">Nature of account (role)</label>
-                    <select id="role_select" name="role" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" required onchange="toggleOwnerFields()">
+                    <label class="block text-sm font-medium text-slate-700">Nature of account (role)</label>
+                    <select id="role_select" name="role" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all" required onchange="toggleOwnerFields()">
                         <option value="owner" {% if request.POST.role == "owner" %}selected{% endif %}>Owner (new company registration)</option>
                         <option value="manager" {% if request.POST.role == "manager" %}selected{% endif %}>Administration Manager</option>
                         <option value="engineer" {% if request.POST.role == "engineer" %}selected{% endif %}>Employee/Engineer</option>
@@ -99,8 +99,8 @@
                 </div>
 
                 <div id="sector_div" class="space-y-2 hidden">
-                    <label class="block text-sm font-medium text-gray-300">Company sector (Enterprise Sector)</label>
-                    <select name="sector" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                    <label class="block text-sm font-medium text-slate-700">Company sector (Enterprise Sector)</label>
+                    <select name="sector" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
                         <option value="corporate">Corporate/commercial (Corporate)</option>
                         <option value="education">Educational / schools / universities (Education)</option>
                         <option value="medical">Medical / Hospitals / Clinics (Medical)</option>
@@ -109,8 +109,8 @@
                 </div>
 
                 <div id="company_name_div" class="space-y-2 col-span-1 md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-300">Company name</label>
-                    <input type="text" list="existing-companies" id="company_input" name="company_name" value="{{ request.POST.company_name|default:'' }}" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Choose from the list or type the company name" required autocomplete="off" onchange="loadDepartments()" oninput="loadDepartments()">
+                    <label class="block text-sm font-medium text-slate-700">Company name</label>
+                    <input type="text" list="existing-companies" id="company_input" name="company_name" value="{{ request.POST.company_name|default:'' }}" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Choose from the list or type the company name" required autocomplete="off" onchange="loadDepartments()" oninput="loadDepartments()">
                     <datalist id="existing-companies">
                         {% for comp in existing_companies %}
                             {% if comp %}
@@ -121,8 +121,8 @@
                 </div>
 
                 <div id="department_div" class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-300">The department you work for (Department)</label>
-                    <select name="department" id="department_select" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                    <label class="block text-sm font-medium text-slate-700">The department you work for (Department)</label>
+                    <select name="department" id="department_select" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
                         <option value="">Please select or type the company first for the sections to appear...</option>
                     </select>
                 </div>
@@ -130,12 +130,12 @@
                 <!-- New: Owner-only fields -->
                 <div id="owner_details_div" class="space-y-4 col-span-1 md:col-span-2 hidden">
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-300">Company field of work/specialization</label>
-                        <input type="text" name="industry" value="{{ request.POST.industry|default:'' }}" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Example: furniture manufacturing, clothing trade, information technology...">
+                        <label class="block text-sm font-medium text-slate-700">Company field of work/specialization</label>
+                        <input type="text" name="industry" value="{{ request.POST.industry|default:'' }}" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Example: furniture manufacturing, clothing trade, information technology...">
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-300">A brief overview of the company</label>
-                        <textarea name="company_description" rows="3" class="w-full bg-black/30 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Write a brief description of the company's activity...">{{ request.POST.company_description|default:'' }}</textarea>
+                        <label class="block text-sm font-medium text-slate-700">A brief overview of the company</label>
+                        <textarea name="company_description" rows="3" class="w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Write a brief description of the company's activity...">{{ request.POST.company_description|default:'' }}</textarea>
                     </div>
                     
                     <!-- New: Department Picker for Owners -->
@@ -149,8 +149,8 @@
                 </div>
 
                 <div id="plan_div" class="space-y-2 col-span-1 md:col-span-2 hidden">
-                    <label class="block text-sm font-medium text-gray-300">The company's subscription package</label>
-                    <select name="plan" id="plan_select" onchange="toggleOwnerFields()" class="w-full bg-black/30 border border-indigo-500/50 rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                    <label class="block text-sm font-medium text-slate-700">The company's subscription package</label>
+                    <select name="plan" id="plan_select" onchange="toggleOwnerFields()" class="w-full bg-white border border-indigo-500/50 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
                         <option value="free" {% if request.POST.plan == "free" %}selected{% endif %}>Free (trial period 7 days)</option>
                         <option value="1_month" {% if request.POST.plan == "1_month" %}selected{% endif %}>A month (3000 J.M)</option>
                         <option value="3_months" {% if request.POST.plan == "3_months" %}selected{% endif %}>Three months (8500 J.M)</option>
@@ -166,8 +166,8 @@
                         </div>
                         <div>
                             <h3 class="text-emerald-300 font-bold text-sm mb-1">💳 Pay after free trial</h3>
-                            <p class="text-gray-400 text-xs leading-relaxed">
-                                We do not require any bank details now. Start for free for a period <strong class="text-white">7 Whole days</strong>, 
+                            <p class="text-slate-500 text-xs leading-relaxed">
+                                We do not require any bank details now. Start for free for a period <strong class="text-slate-900">7 Whole days</strong>, 
                                 Our team will then contact you to complete the subscription via a secure and approved payment gateway.
                             </p>
                         </div>
@@ -191,13 +191,13 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02] mt-2">
+            <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all hover:scale-[1.02] mt-2">
                 <i class="fas fa-rocket ml-2"></i> Create an account and start the free trial
             </button>
         </form>
 
-        <div class="mt-8 text-center text-sm pt-6 border-t border-white/10">
-            <p class="text-gray-400">
+        <div class="mt-8 text-center text-sm pt-6 border-t border-slate-300">
+            <p class="text-slate-500">
                 Already have an account? 
                 <a href="{% url 'login' %}" class="font-bold text-primary hover:text-indigo-400 hover:underline transition-colors">Login</a>
             </p>
@@ -262,7 +262,7 @@
             div.className = 'flex items-center gap-2 bg-black/20 p-2 rounded-lg border border-white/5 hover:border-primary/30 transition-all cursor-pointer';
             div.innerHTML = `
                 <input type="checkbox" name="selected_depts" value="${d}" id="dept_${d}" checked class="checkbox checkbox-primary checkbox-xs">
-                <label for="dept_${d}" class="text-xs text-gray-300 cursor-pointer flex-1">${d}</label>
+                <label for="dept_${d}" class="text-xs text-slate-700 cursor-pointer flex-1">${d}</label>
             `;
             checklist.appendChild(div);
         });

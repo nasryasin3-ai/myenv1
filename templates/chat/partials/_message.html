@@ -1,57 +1,48 @@
 {% load static %}
-<div class="flex {% if msg.sender.user == user %}justify-start flex-row-reverse{% else %}justify-start{% endif %} items-end gap-3 animate-fade-in">
-    <!-- Avatar -->
-    <div class="w-9 h-9 bg-gradient-to-br {% if msg.sender.user == user %}from-indigo-500 to-purple-600{% else %}from-gray-700 to-gray-800{% endif %} rounded-full flex items-center justify-center text-xs text-white font-bold shadow-xl border border-white/5">
+<div class="flex {% if msg.sender.user == user %}justify-end{% else %}justify-start{% endif %} items-end gap-2.5 animate-fade-in">
+    {% if msg.sender.user != user %}
+    <!-- Avatar (Other) -->
+    <div class="w-8 h-8 bg-slate-200 text-slate-700 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm border border-slate-300">
         {{ msg.sender.user.username|first|upper }}
     </div>
+    {% endif %}
 
-    <div class="max-w-[75%] space-y-1">
-        <div class="flex items-center gap-2 px-1 {% if msg.sender.user == user %}flex-row-reverse{% endif %}">
-            <span class="text-[11px] font-bold {% if msg.sender.user == user %}text-indigo-300{% else %}text-gray-400{% endif %}">
+    <div class="max-w-[70%] space-y-1">
+        {% if msg.sender.user != user %}
+        <div class="px-1">
+            <span class="text-[11px] font-bold text-slate-500">
                 {{ msg.sender.user.username }}
             </span>
         </div>
+        {% endif %}
         
-        <div class="{% if msg.sender.user == user %}bg-indigo-600/20 border border-indigo-500/30 rounded-2xl rounded-tr-none{% else %}bg-white/5 border border-white/10 rounded-2xl rounded-tl-none{% endif %} px-4 py-3 relative shadow-xl">
+        <div class="{% if msg.sender.user == user %}bg-indigo-600 text-white rounded-2xl rounded-br-sm shadow-md shadow-indigo-600/10{% else %}bg-slate-100 border border-slate-200 text-slate-900 rounded-2xl rounded-bl-sm shadow-sm{% endif %} px-4 py-3 relative">
             
             {% if msg.audio_file %}
-                <!-- Voice Note Player (WhatsApp-style) -->
+                <!-- Voice Note Player -->
                 <div class="flex items-center gap-3 min-w-[180px] py-1">
-                    <!-- Play Button -->
                     <button onclick="toggleAudioPlayer('{{ msg.id }}')"
-                            class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white transition-all hover:scale-105 shadow-md
-                                   {% if msg.sender.user == user %}bg-indigo-600{% else %}bg-indigo-500/80{% endif %}">
+                            class="w-9 h-9 rounded-full shrink-0 flex items-center justify-center transition-all hover:scale-105 shadow-sm
+                                   {% if msg.sender.user == user %}bg-white text-indigo-600{% else %}bg-indigo-600 text-white{% endif %}">
                         <i class="fas fa-play text-xs" id="icon-audio-{{ msg.id }}"></i>
                     </button>
 
-                    <!-- Waveform + Timer -->
                     <div class="flex-1 flex flex-col gap-1.5">
-                        <div class="flex items-end gap-[2px] h-7" id="wave-{{ msg.id }}">
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:30%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:60%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:90%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:50%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:80%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:40%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:70%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:30%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:60%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:90%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:50%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:75%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:40%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:85%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:55%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:35%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:65%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:80%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:45%"></div>
-                            <div class="flex-1 rounded-full bg-indigo-400/60" style="height:90%"></div>
+                        <div class="flex items-end gap-[2px] h-6" id="wave-{{ msg.id }}">
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:30%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:60%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:90%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:50%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:80%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:40%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:70%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:30%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:60%"></div>
+                            <div class="flex-1 rounded-full {% if msg.sender.user == user %}bg-white/60{% else %}bg-indigo-400{% endif %}" style="height:90%"></div>
                         </div>
-                        <span class="text-[9px] text-gray-500 font-mono" id="timer-{{ msg.id }}">0:00</span>
+                        <span class="text-[9px] {% if msg.sender.user == user %}text-indigo-200{% else %}text-slate-500{% endif %} font-mono" id="timer-{{ msg.id }}">0:00</span>
                     </div>
 
-                    <!-- Hidden audio element -->
                     <audio id="audio-{{ msg.id }}"
                            onended="resetAudioPlayer('{{ msg.id }}')"
                            ontimeupdate="updateAudioTimer('{{ msg.id }}', this)">
@@ -62,29 +53,36 @@
 
             {% if msg.attachment %}
                 {% if '/image/' in msg.attachment.url or msg.file_type == 'jpg' %}
-                    <div class="rounded-xl overflow-hidden mb-2 border border-white/10">
-                         <img src="{{ msg.attachment.url }}" class="w-full h-auto cursor-zoom-in" onclick="window.open(this.src)">
+                    <div class="rounded-xl overflow-hidden mb-2 border border-black/10">
+                         <img src="{{ msg.attachment.url }}" class="w-full h-auto cursor-zoom-in rounded-lg" onclick="window.open(this.src)">
                     </div>
                 {% else %}
-                    <a href="{{ msg.attachment.url }}" target="_blank" class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 mb-2 hover:bg-white/10 transition-all">
-                        <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fas fa-file-alt"></i></div>
-                        <div class="truncate text-xs text-white font-Tajawal">{{ msg.attachment.name }}</div>
+                    <a href="{{ msg.attachment.url }}" target="_blank" class="flex items-center gap-3 {% if msg.sender.user == user %}bg-white/10 hover:bg-white/20 text-white{% else %}bg-white hover:bg-slate-50 text-slate-900 border border-slate-200{% endif %} p-2.5 rounded-xl mb-2 transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400"><i class="fas fa-file-lines"></i></div>
+                        <div class="truncate text-xs font-semibold">{{ msg.attachment.name }}</div>
                     </a>
                 {% endif %}
             {% endif %}
             
             {% if msg.content %}
-                <p class="text-white text-sm leading-relaxed whitespace-pre-wrap font-Tajawal">{{ msg.content }}</p>
+                <p class="text-sm leading-relaxed whitespace-pre-wrap {% if msg.sender.user == user %}text-white font-medium{% else %}text-slate-900 font-medium{% endif %}">{{ msg.content }}</p>
             {% endif %}
 
-            <div class="flex justify-between items-center mt-2 opacity-40 text-[9px]">
-                <span class="font-Tajawal">{{ msg.timestamp|date:"H:i" }}</span>
+            <div class="flex justify-between items-center mt-1.5 {% if msg.sender.user == user %}text-indigo-200{% else %}text-slate-400{% endif %} text-[10px]">
+                <span>{{ msg.timestamp|date:"H:i" }}</span>
                 {% if msg.sender.user == user %}
-                    <button onclick="deleteMessage('{{ msg.id }}', this.closest('.animate-fade-in'))" class="hover:text-red-400 transition-colors">
-                        <i class="fas fa-trash-alt"></i>
+                    <button onclick="deleteMessage('{{ msg.id }}', this.closest('.animate-fade-in'))" class="hover:text-white transition-colors ml-2">
+                        <i class="fas fa-trash-alt text-[10px]"></i>
                     </button>
                 {% endif %}
             </div>
         </div>
     </div>
+
+    {% if msg.sender.user == user %}
+    <!-- Avatar (You) -->
+    <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">
+        {{ msg.sender.user.username|first|upper }}
+    </div>
+    {% endif %}
 </div>

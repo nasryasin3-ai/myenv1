@@ -3,7 +3,7 @@
 {% block content %}
 <div class="h-[88vh] flex flex-col animate-fade-in-up">
     <!-- Header -->
-    <div class="mb-3 flex items-center justify-between bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl">
+    <div class="mb-3 flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
                 <i class="fas fa-robot text-xl text-white"></i>
@@ -13,23 +13,23 @@
                 <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
                     Smart Assistant — General mode
                 </h1>
-                <p class="text-gray-400 text-xs">Ask me any question, I will answer in your own language</p>
+                <p class="text-slate-500 text-xs">Ask me any question, I will answer in your own language</p>
                 {% else %}
                 <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
                     FlowNest AI — File analysis
                 </h1>
-                <p class="text-gray-400 text-xs">I answer you from within your company files. • I answer in your own language</p>
+                <p class="text-slate-500 text-xs">I answer you from within your company files. • I answer in your own language</p>
                 {% endif %}
             </div>
         </div>
         <div class="flex gap-2">
             <button onclick="clearHistory()" title="Clear the conversation"
-                class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 hover:text-red-300 text-xs py-2 px-3 rounded-lg flex items-center gap-1 transition-colors">
+                class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 hover:text-red-300 text-xs py-2 px-3 rounded-lg flex items-center gap-1 transition-colors">
                 <i class="fas fa-trash-alt text-xs"></i> Scan
             </button>
             {% if request.user.profile.role != 'engineer' %}
             <button onclick="syncDatabase()"
-                class="bg-black/30 hover:bg-black/50 border border-white/10 text-white text-xs py-2 px-3 rounded-lg flex items-center gap-1 transition-colors">
+                class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-sm text-xs py-2 px-3 rounded-lg flex items-center gap-1 transition-colors">
                 <i class="fas fa-sync-alt text-xs" id="sync-icon"></i> Update
             </button>
             {% endif %}
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Chat Interface -->
-    <div class="flex-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+    <div class="flex-1 bg-white border border-slate-200 rounded-3xl overflow-hidden flex flex-col shadow-sm">
         <!-- Messages Area -->
         <div id="chat-history" class="flex-1 overflow-y-auto p-5 space-y-5 scroll-smooth">
             <!-- Initial greeting -->
@@ -45,7 +45,7 @@
                 <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow">
                     <i class="fas fa-robot text-white text-xs"></i>
                 </div>
-                <div class="bg-white/10 border border-white/5 rounded-2xl rounded-tl-none px-4 py-3 text-white max-w-[80%] shadow text-sm leading-relaxed">
+                <div class="bg-slate-100 border border-slate-200 rounded-2xl rounded-tl-none px-4 py-3 text-slate-800 max-w-[80%] shadow-sm text-sm leading-relaxed">
                     {% if request.user.profile.role == 'engineer' %}
                     Hello! I am your smart assistant. Ask me any question and I will answer you in your own language 😊
                     {% else %}
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Input -->
-        <div class="p-4 bg-black/40 border-t border-white/10">
+        <div class="p-4 bg-slate-50 border-t border-slate-200">
             <form id="chat-form" onsubmit="sendMessage(event)" class="relative flex items-center gap-2">
                 <input type="text" id="chat-input"
                     class="flex-1 bg-white/5 border border-white/10 rounded-full py-3 px-5 text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all shadow-inner text-sm"
@@ -108,7 +108,7 @@ function appendMessage(sender, text, isHtml = false, saveToStorage = true) {
     const content = isHtml ? text : text.replace(/\n/g, '<br>');
 
     div.innerHTML = `${avatar}
-        <div class="${bubbleCls} border border-white/5 rounded-2xl px-4 py-3 max-w-[80%] shadow text-sm leading-relaxed">${content}</div>`;
+        <div class="${bubbleCls} border border-white/5 rounded-2xl px-4 py-3 max-w-[80%] shadow text-sm leading-relaxed" dir="auto">${content}</div>`;
 
     chatHistory.appendChild(div);
     chatHistory.scrollTop = chatHistory.scrollHeight;

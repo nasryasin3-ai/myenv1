@@ -380,108 +380,281 @@ function cancelAutoSummary() {
 async function _sendAutoSummary() {
     if (_autoSumRec) { try { _autoSumRec.stop(); } catch(e){} _autoSumRec = null; }
     document.getElementById('auto-sum-banner')?.remove();
-    if (!_autoSumText || _autoSumText.trim().length < 15) return;
+    if (!_autoSumText || _autoSumText.trim().length < 10) return;
     const toast = document.createElement('div');
     toast.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:9999;background:#4f46e5;color:#fff;padding:12px 22px;border-radius:16px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(79,70,229,0.4)`;
-    toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التلخيص...';
+    toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري استخراج ملخص الاجتماع...';
     document.body.appendChild(toast);
     try {
         const csrf = window._csrfToken || '';
         const res = await fetch('/chat/api/call/summarize/', {
             method:'POST', headers:{'X-CSRFToken':csrf,'Content-Type':'application/json'},
-            body: JSON.stringify({transcript: _autoSumText, room_name: window._roomName})
+            body: JSON.stringify({transcript: _autoSumText, room_name: window._roomName || 'general'})
         });
         const data = await res.json();
         toast.remove();
-        if (data.summary || data.tasks?.length) showCallSummaryResult(data.summary, data.tasks);
+        if (data.summary || data.tasks?.length) {
+            showCallSummaryResult(data.summary, data.tasks);
+            refreshSummariesPanel();
+            document.getElementById('summaries-panel')?.classList.remove('hidden');
+        }
     } catch(e) { toast.remove(); }
 }
 
-// ─── General Mic (for any discussion) ────────────────────────────────────────
+// ─── General Mic (for any discussion / meeting summary) ────────────────────────
+let _genTimerInterval = null;
+let _genSeconds = 0;
+
 window.toggleGeneralSummaryMic = function() {
     const btn = document.getElementById('general-sum-btn');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { alert('استخدم Chrome'); return; }
+    
+    if (!SR) { 
+        alert('ميزة تحويل الصوت المباشر إلى نص تتطلب استخدام متصفح يدعم Web Speech API (مثل Google Chrome أو Microsoft Edge) عبر HTTPS أو localhost. يمكنك أيضاً استخدام زر تلخيص الملاحظات لكتابة النص مباشرة.'); 
+        return; 
+    }
+
+    // If currently running, stop and summarize
     if (_genRec) {
-        _genRec.stop(); _genRec = null;
-        if (btn) btn.innerHTML = '<i class="fas fa-microphone text-purple-400 text-sm"></i>';
-        if (_genText && _genText.length > 10) _sendGeneralSummary(_genText);
-        _genText = '';
+        window.stopAndSummarizeGeneral();
         return;
     }
+
     _genText = '';
-    _genRec = new SR();
-    _genRec.continuous = true; _genRec.interimResults = true; _genRec.lang = 'ar-SA';
-    _genRec.onresult = e => { let t=''; for(let i=0;i<e.results.length;i++) t+=e.results[i][0].transcript+' '; _genText=t.trim(); };
-    _genRec.onerror = ()=>{};
-    _genRec.onend = ()=>{ if(_genRec) try{_genRec.start();}catch(e){} };
-    _genRec.start();
-    if (btn) btn.innerHTML = '<i class="fas fa-stop text-red-400 text-sm"></i>';
+    _genSeconds = 0;
+
+    try {
+        _genRec = new SR();
+        _genRec.continuous = true;
+        _genRec.interimResults = true;
+        _genRec.lang = 'ar-SA';
+
+        // Floating banner showing recording status
+        document.getElementById('general-sum-banner')?.remove();
+        const banner = document.createElement('div');
+        banner.id = 'general-sum-banner';
+        banner.style.cssText = `
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; background: #ffffff; color: #0f172a;
+            border-radius: 20px; padding: 14px 22px; font-size: 13px; font-weight: 700;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.15); border: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; gap: 8px; min-width: 340px; max-width: 90vw;
+        `;
+        banner.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="display:inline-block;width:10px;height:10px;background:#ef4444;border-radius:50%;animation:pulse 1s infinite;"></span>
+                    <span style="color:#4338ca;font-weight:800;">جاري الاستماع للنقاش...</span>
+                    <span id="gen-sum-timer" style="background:#f1f5f9;color:#64748b;font-size:11px;padding:2px 8px;border-radius:8px;font-family:monospace;">00:00</span>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button onclick="window.cancelGeneralSummary()" style="padding:4px 10px;background:#f1f5f9;border:1px solid #cbd5e1;color:#64748b;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;">إلغاء</button>
+                    <button onclick="window.stopAndSummarizeGeneral()" style="padding:4px 12px;background:#4f46e5;color:#fff;border:none;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(79,70,229,0.3);">إنهاء وتلخيص ✨</button>
+                </div>
+            </div>
+            <div id="gen-sum-preview" style="font-size:11px;color:#64748b;font-style:italic;max-height:48px;overflow-y:auto;direction:rtl;text-align:right;">
+                تحدث الآن بوضوح وسيتم التقاط كلماتك وتدوينها تلقائياً...
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        if (_genTimerInterval) clearInterval(_genTimerInterval);
+        _genTimerInterval = setInterval(() => {
+            _genSeconds++;
+            const m = String(Math.floor(_genSeconds / 60)).padStart(2, '0');
+            const s = String(_genSeconds % 60).padStart(2, '0');
+            const timerEl = document.getElementById('gen-sum-timer');
+            if (timerEl) timerEl.textContent = `${m}:${s}`;
+        }, 1000);
+
+        _genRec.onresult = e => {
+            let t = '';
+            for (let i = 0; i < e.results.length; i++) {
+                t += e.results[i][0].transcript + ' ';
+            }
+            _genText = t.trim();
+            const prev = document.getElementById('gen-sum-preview');
+            if (prev && _genText) {
+                prev.textContent = _genText;
+            }
+        };
+
+        _genRec.onerror = err => {
+            console.error('Speech recognition error:', err);
+            if (err.error === 'not-allowed') {
+                alert('تم حظر الوصول للميكروفون. يرجى تفعيل إذن الميكروفون من إعدادات المتصفح.');
+                window.cancelGeneralSummary();
+            }
+        };
+
+        _genRec.onend = () => {
+            if (_genRec) {
+                try { _genRec.start(); } catch(e){}
+            }
+        };
+
+        _genRec.start();
+        if (btn) btn.innerHTML = '<i class="fas fa-stop text-rose-600 text-sm animate-pulse"></i>';
+
+    } catch(e) {
+        console.error('Start recognition failed:', e);
+        alert('تعذر بدء الاستماع الصوتي: ' + e.message);
+        window.cancelGeneralSummary();
+    }
+};
+
+window.stopAndSummarizeGeneral = function() {
+    const btn = document.getElementById('general-sum-btn');
+    if (_genRec) {
+        try { _genRec.stop(); } catch(e){}
+        _genRec = null;
+    }
+    if (_genTimerInterval) {
+        clearInterval(_genTimerInterval);
+        _genTimerInterval = null;
+    }
+    document.getElementById('general-sum-banner')?.remove();
+    if (btn) btn.innerHTML = '<i class="fas fa-microphone text-purple-600 text-sm"></i>';
+
+    const textToSummarize = (_genText || '').trim();
+    _genText = '';
+
+    if (!textToSummarize || textToSummarize.length < 5) {
+        alert('لم يتم التقاط نص كافٍ للتلخيص. تأكد من التحدث عبر الميكروفون بوضوح قبل الضغط على إنهاء وتلخيص.');
+        return;
+    }
+
+    _sendGeneralSummary(textToSummarize);
+};
+
+window.cancelGeneralSummary = function() {
+    const btn = document.getElementById('general-sum-btn');
+    if (_genRec) {
+        try { _genRec.stop(); } catch(e){}
+        _genRec = null;
+    }
+    if (_genTimerInterval) {
+        clearInterval(_genTimerInterval);
+        _genTimerInterval = null;
+    }
+    _genText = '';
+    document.getElementById('general-sum-banner')?.remove();
+    if (btn) btn.innerHTML = '<i class="fas fa-microphone text-purple-600 text-sm"></i>';
+};
+
+window.summarizeCustomText = function(text) {
+    if (!text || text.trim().length < 5) {
+        alert('يرجى إدخال نص كافٍ للتلخيص.');
+        return;
+    }
+    _sendGeneralSummary(text.trim());
 };
 
 async function _sendGeneralSummary(text) {
     const toast = document.createElement('div');
-    toast.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:9999;background:#4f46e5;color:#fff;padding:12px 22px;border-radius:16px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px`;
-    toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التلخيص...';
+    toast.style.cssText = `
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        z-index: 10000; background: #4f46e5; color: #ffffff; padding: 14px 26px;
+        border-radius: 20px; font-weight: 700; font-size: 13px; display: flex;
+        align-items: center; gap: 10px; box-shadow: 0 12px 32px rgba(79,70,229,0.4);
+    `;
+    toast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري استخراج الملخص وقائمة المهام بالذكاء الاصطناعي...';
     document.body.appendChild(toast);
+
     try {
         const csrf = window._csrfToken || '';
         const res = await fetch('/chat/api/call/summarize/', {
-            method:'POST', headers:{'X-CSRFToken':csrf,'Content-Type':'application/json'},
-            body: JSON.stringify({transcript: text, room_name: window._roomName})
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrf,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ transcript: text, room_name: window._roomName || 'general' })
         });
         const data = await res.json();
         toast.remove();
-        if (data.summary || data.tasks?.length) showCallSummaryResult(data.summary, data.tasks);
-    } catch(e) { toast.remove(); }
+
+        if (!res.ok || data.error) {
+            alert('خطأ في التلخيص: ' + (data.error || 'فشل الاتصال بالخادم'));
+            return;
+        }
+
+        if (data.summary || (data.tasks && data.tasks.length)) {
+            showCallSummaryResult(data.summary, data.tasks);
+            refreshSummariesPanel();
+            // Automatically open summaries panel
+            const panel = document.getElementById('summaries-panel');
+            if (panel) panel.classList.remove('hidden');
+        } else {
+            alert('لم يتم إرجاع ملخص من نموذج الذكاء الاصطناعي.');
+        }
+    } catch(e) {
+        toast.remove();
+        console.error('Summary API error:', e);
+        alert('تعذر إتمام التلخيص: ' + e.message);
+    }
 }
 
-// ─── Summary Result Modal ─────────────────────────────────────────────────────
+// ─── Summary Result Modal (Light Mode) ────────────────────────────────────────
 function showCallSummaryResult(summary, tasks) {
     document.getElementById('call-summary-result')?.remove();
     let tasksHtml = '';
-    if (tasks?.length) {
-        tasksHtml = `<div style="margin-top:16px;text-align:right">
-            <p style="color:#facc15;font-weight:700;font-size:12px;margin-bottom:8px">📋 المهام المحفوظة تلقائياً</p>
-            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">
-                ${tasks.map(t=>`<li style="background:rgba(255,255,255,0.05);padding:10px 14px;border-radius:12px;font-size:12px;color:#d1d5db;display:flex;justify-content:flex-end;align-items:center;gap:8px"><span>${t}</span><span style="color:#22c55e">✓</span></li>`).join('')}
-            </ul></div>`;
+    if (tasks && tasks.length) {
+        tasksHtml = `
+            <div style="margin-top: 18px; text-align: right;">
+                <p style="color: #4f46e5; font-weight: 800; font-size: 12px; margin-bottom: 8px;">📋 المهام المستخرجة تلقائياً (${tasks.length})</p>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                    ${tasks.map(t => `
+                        <li style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 14px; font-size: 12px; color: #1e293b; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <span style="font-weight: 600;">${t}</span>
+                            <span style="color: #16a34a; font-weight: bold;">✓</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
     }
+
     const m = document.createElement('div');
     m.id = 'call-summary-result';
-    m.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px)';
+    m.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,0.45);backdrop-filter:blur(8px);';
     m.innerHTML = `
-      <div style="background:#0d0f1a;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:24px;max-width:480px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.8)">
-        <div style="width:48px;height:48px;background:rgba(139,92,246,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 16px">✨</div>
-        <h3 style="font-size:17px;font-weight:900;color:#fff;margin:0 0 12px;text-align:center">ملخص الاجتماع</h3>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;text-align:right;font-size:13px;color:#d1d5db;line-height:1.7;max-height:180px;overflow-y:auto">
-            ${summary || 'لم يُلتقط محتوى كافٍ.'}
+      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:28px;padding:26px;max-width:500px;width:100%;box-shadow:0 25px 60px -15px rgba(0,0,0,0.25);">
+        <div style="width:52px;height:52px;background:#eef2ff;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;color:#4f46e5;">✨</div>
+        <h3 style="font-size:18px;font-weight:900;color:#0f172a;margin:0 0 6px;text-align:center;">ملخص الاجتماع والنقاش</h3>
+        <p style="font-size:12px;color:#64748b;text-align:center;margin:0 0 16px;">تم التلخيص بنجاح وتوليد المهام عبر الذكاء الاصطناعي</p>
+        
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;text-align:right;font-size:13px;color:#1e293b;line-height:1.75;max-height:220px;overflow-y:auto;direction:rtl;">
+            ${summary || 'لا يوجد ملخص متاح.'}
         </div>
+        
         ${tasksHtml}
-        <div style="display:flex;gap:10px;margin-top:20px">
-          <button onclick="document.getElementById('call-summary-result').remove()" style="flex:1;padding:12px;border-radius:12px;background:rgba(255,255,255,0.06);border:none;color:#9ca3af;font-weight:700;cursor:pointer;font-size:13px">إغلاق</button>
-          <button onclick="refreshSummariesPanel();document.getElementById('call-summary-result').remove()" style="flex:1;padding:12px;border-radius:12px;background:#4f46e5;border:none;color:#fff;font-weight:700;cursor:pointer;font-size:13px">عرض في الملخصات ←</button>
+
+        <div style="display:flex;gap:10px;margin-top:22px;">
+          <button onclick="document.getElementById('call-summary-result').remove()" style="flex:1;padding:12px;border-radius:14px;background:#f1f5f9;border:1px solid #e2e8f0;color:#475569;font-weight:700;cursor:pointer;font-size:13px;">إغلاق</button>
+          <button onclick="refreshSummariesPanel();document.getElementById('summaries-panel')?.classList.remove('hidden');document.getElementById('call-summary-result').remove()" style="flex:1;padding:12px;border-radius:14px;background:#4f46e5;border:none;color:#fff;font-weight:700;cursor:pointer;font-size:13px;box-shadow:0 4px 12px rgba(79,70,229,0.3);">عرض في القائمة ←</button>
         </div>
-      </div>`;
+      </div>
+    `;
     document.body.appendChild(m);
 }
 
 // ─── Refresh Summaries Panel ──────────────────────────────────────────────────
 function refreshSummariesPanel() {
-    fetch(`/chat/api/summaries/${window._roomName}/`)
-        .then(r=>r.json())
-        .then(data=>{
+    fetch(`/chat/api/summaries/${window._roomName || 'general'}/`)
+        .then(r => r.json())
+        .then(data => {
             if (!data.summaries) return;
             const list = document.getElementById('summaries-list');
             if (!list) return;
             list.innerHTML = data.summaries.length
-                ? data.summaries.map(s=>`
-                    <div style="background:rgba(255,255,255,0.04);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,0.05)">
-                        <p style="font-size:10px;color:#4b5563;margin:0 0 4px">${s.date}</p>
-                        <p style="font-size:12px;color:#d1d5db;line-height:1.6;margin:0">${s.summary}</p>
+                ? data.summaries.map(s => `
+                    <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200">
+                        <p class="text-[10px] text-slate-400 font-semibold mb-1">${s.date}</p>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">${s.summary}</p>
                     </div>`).join('')
-                : '<p style="font-size:12px;color:#4b5563;text-align:center;padding:40px 0">لا توجد ملخصات بعد</p>';
-        }).catch(()=>{});
+                : '<p class="text-xs text-slate-400 text-center py-10 font-medium">لا توجد ملخصات بعد</p>';
+        }).catch(err => console.error('Refresh summaries failed:', err));
 }
 
 // ─── Heartbeat ────────────────────────────────────────────────────────────────

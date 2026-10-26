@@ -6,30 +6,30 @@
 <div class="space-y-6 animate-fade-in-up">
 
   <!-- ── Header ─────────────────────────────────────────────── -->
-  <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+  <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-wrap items-center justify-between gap-4 shadow-xl">
     <div class="flex items-center gap-4">
       <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
-        <i class="fas fa-file-chart-line text-3xl text-white"></i>
+        <i class="fas fa-file-chart-line text-3xl text-slate-900"></i>
       </div>
       <div>
         <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
           Operational performance reports
         </h1>
-        <p class="text-gray-400 mt-1">Company: <strong class="text-white">{{ profile.company_name }}</strong></p>
+        <p class="text-slate-500 mt-1">Company: <strong class="text-slate-900">{{ profile.company_name }}</strong></p>
       </div>
     </div>
     <div class="flex gap-2 text-sm">
-      <span class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-gray-300">
+      <span class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-slate-700">
         <i class="fas fa-calendar-day text-yellow-400 ml-1"></i>{{ today }}
       </span>
-      <span class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-gray-300">
+      <span class="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-slate-700">
         <i class="fas fa-calendar-week text-blue-400 ml-1"></i>A week {{ week_start }}
       </span>
     </div>
   </div>
 
   <!-- ── TAB navigation ────────────────────────────────────── -->
-  <div class="flex gap-2 bg-white/5 border border-white/10 rounded-2xl p-2">
+  <div class="flex gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-2">
     <button onclick="showTab('daily')"   id="tab-daily"  class="tab-btn active flex-1 py-2 rounded-xl text-sm font-bold transition-all">📅 Today's report</button>
     <button onclick="showTab('weekly')"  id="tab-weekly" class="tab-btn flex-1 py-2 rounded-xl text-sm font-bold transition-all">📆 Report of the week</button>
     <button onclick="showTab('yearly')"  id="tab-yearly" class="tab-btn flex-1 py-2 rounded-xl text-sm font-bold transition-all">🗓️ Year report {{ year }}</button>
@@ -42,12 +42,12 @@
       <h2 class="text-xl font-bold text-indigo-300 flex items-center gap-2">
         <i class="fas fa-robot text-2xl text-indigo-400"></i> Smart written administrative report
       </h2>
-      <button onclick="fetchAIReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center gap-2">
+      <button onclick="fetchAIReport()" class="bg-indigo-600 hover:bg-indigo-500 text-slate-900 px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center gap-2">
         <i class="fas fa-magic"></i> Reanalysis
       </button>
     </div>
-    <div id="ai-report-content" class="prose prose-invert prose-indigo max-w-none text-gray-300 text-sm leading-loose relative z-10 bg-black/20 p-5 rounded-2xl border border-white/5">
-      <div class="flex items-center gap-3 text-gray-400">
+    <div id="ai-report-content" class="prose prose-invert prose-indigo max-w-none text-slate-700 text-sm leading-loose relative z-10 bg-slate-50 p-5 rounded-2xl border border-slate-200 transition-all">
+      <div class="flex items-center gap-3 text-slate-500">
         <i class="fas fa-spinner fa-spin text-indigo-400 text-xl"></i> Reading the contents of the files and extracting the administrative analysis...
       </div>
     </div>
@@ -59,34 +59,34 @@
       <h2 class="text-xl font-bold text-yellow-400 mb-1 flex items-center gap-2">
         <i class="fas fa-sun"></i> Day report summary {{ today }}
       </h2>
-      <p class="text-gray-400 text-sm mb-4">A comprehensive report on all files uploaded and operational activity during the current day</p>
+      <p class="text-slate-500 text-sm mb-4">A comprehensive report on all files uploaded and operational activity during the current day</p>
 
       <!-- KPIs -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4 text-center">
           <div class="text-3xl font-black text-indigo-400">{{ daily_dept.total }}</div>
-          <div class="text-xs text-gray-400 mt-1">Total files today</div>
+          <div class="text-xs text-slate-500 mt-1">Total files today</div>
         </div>
         <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-center">
           <div class="text-3xl font-black text-blue-400">{{ daily_dept.production }}</div>
-          <div class="text-xs text-gray-400 mt-1">Production</div>
+          <div class="text-xs text-slate-500 mt-1">Production</div>
         </div>
         <div class="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 text-center">
           <div class="text-3xl font-black text-green-400">{{ daily_dept.finance }}</div>
-          <div class="text-xs text-gray-400 mt-1">Financial</div>
+          <div class="text-xs text-slate-500 mt-1">Financial</div>
         </div>
         <div class="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-4 text-center">
           <div class="text-3xl font-black text-purple-400">{{ daily_type.pdf }} PDF / {{ daily_type.excel }} XLS</div>
-          <div class="text-xs text-gray-400 mt-1">File types</div>
+          <div class="text-xs text-slate-500 mt-1">File types</div>
         </div>
       </div>
 
       <!-- Today's file list -->
       {% if daily_files %}
-      <h3 class="font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-list text-yellow-400"></i> Files uploaded today</h3>
+      <h3 class="font-bold text-slate-900 mb-3 flex items-center gap-2"><i class="fas fa-list text-yellow-400"></i> Files uploaded today</h3>
       <div class="space-y-2">
         {% for f in daily_files %}
-        <div class="flex items-center justify-between bg-black/30 border border-white/5 rounded-xl px-4 py-3 hover:bg-white/5 transition-all group">
+        <div class="flex items-center justify-between bg-black/30 border border-slate-200 rounded-xl px-4 py-3 hover:bg-white/5 transition-all group">
           <div class="flex items-center gap-3">
             {% if f.file_type == 'pdf' %}
               <i class="fas fa-file-pdf text-red-400 text-lg"></i>
@@ -96,15 +96,15 @@
               <i class="fas fa-file text-blue-400 text-lg"></i>
             {% endif %}
             <div>
-              <p class="text-white text-sm font-semibold">{{ f.file.name|slice:"14:" }}</p>
+              <p class="text-slate-900 text-sm font-semibold">{{ f.file.name|slice:"14:" }}</p>
               <p class="text-xs text-gray-500">{{ f.uploaded_by.username }} · {{ f.source_department }} ← {{ f.target_department }} · {{ f.uploaded_at|date:"H:i" }}</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <a href="{% url 'analyze_file' f.id %}" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1">
+            <a href="{% url 'analyze_file' f.id %}" class="bg-indigo-600 hover:bg-indigo-500 text-slate-900 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1">
               <i class="fas fa-microscope"></i> Analysis
             </a>
-            <a href="{% url 'delete_file' f.id %}" onclick="return confirm('Are you sure you want to delete this file permanently?')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white text-xs p-1.5 rounded-lg transition-all">
+            <a href="{% url 'delete_file' f.id %}" onclick="return confirm('Are you sure you want to delete this file permanently?')" class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-slate-900 text-xs p-1.5 rounded-lg transition-all">
               <i class="fas fa-trash-alt"></i>
             </a>
           </div>
@@ -136,10 +136,37 @@
   .tab-btn { color: #9ca3af; background: transparent; }
   .tab-btn.active { background: rgba(99,102,241,0.2); color: white; border: 1px solid rgba(99,102,241,0.4); }
   
-  .prose h1, .prose h2, .prose h3 { color: white !important; margin-top: 1.5em; margin-bottom: 0.5em; }
+  .prose h1, .prose h2, .prose h3 { color: white !important; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; }
   .prose strong { color: #facc15 !important; }
-  .prose ul { list-style-type: none; padding-right: 0; }
-  .prose li::before { content: "•"; color: #818cf8; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+  .prose p { margin-bottom: 1em; line-height: 1.8; }
+
+  /* Base tables */
+  .prose table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); }
+  .prose th, .prose td { padding: 0.75rem 1rem; border: 1px solid rgba(255, 255, 255, 0.1); }
+  .prose th { background: rgba(99, 102, 241, 0.25); color: #c7d2fe; font-weight: 700; }
+  .prose tr:nth-child(even) td { background: rgba(255, 255, 255, 0.03); }
+
+  /* RTL Support (العربية: من اليمين للشمال) */
+  .report-rtl { direction: rtl !important; text-align: right !important; font-family: 'Cairo', system-ui, sans-serif; }
+  .report-rtl h1, .report-rtl h2, .report-rtl h3, .report-rtl h4, .report-rtl p, .report-rtl div, .report-rtl span { text-align: right !important; direction: rtl !important; }
+  .report-rtl ul { list-style-type: none !important; padding-right: 1.5rem !important; padding-left: 0 !important; margin-right: 0 !important; }
+  .report-rtl li { position: relative !important; margin-bottom: 0.5rem !important; text-align: right !important; direction: rtl !important; }
+  .report-rtl li::before { content: "•"; color: #818cf8; font-weight: bold; position: absolute; right: -1.2rem; top: 0; font-size: 1.2em; line-height: 1; }
+  .report-rtl ol { padding-right: 1.5rem !important; padding-left: 0 !important; text-align: right !important; direction: rtl !important; }
+  .report-rtl ol li { list-style-type: decimal !important; }
+  .report-rtl table { direction: rtl !important; text-align: right !important; }
+  .report-rtl th, .report-rtl td { text-align: right !important; direction: rtl !important; }
+
+  /* LTR Support (English: Left to Right) */
+  .report-ltr { direction: ltr !important; text-align: left !important; }
+  .report-ltr h1, .report-ltr h2, .report-ltr h3, .report-ltr h4, .report-ltr p, .report-ltr div, .report-ltr span { text-align: left !important; direction: ltr !important; }
+  .report-ltr ul { list-style-type: none !important; padding-left: 1.5rem !important; padding-right: 0 !important; margin-left: 0 !important; }
+  .report-ltr li { position: relative !important; margin-bottom: 0.5rem !important; text-align: left !important; direction: ltr !important; }
+  .report-ltr li::before { content: "•"; color: #818cf8; font-weight: bold; position: absolute; left: -1.2rem; top: 0; font-size: 1.2em; line-height: 1; }
+  .report-ltr ol { padding-left: 1.5rem !important; padding-right: 0 !important; text-align: left !important; direction: ltr !important; }
+  .report-ltr ol li { list-style-type: decimal !important; }
+  .report-ltr table { direction: ltr !important; text-align: left !important; }
+  .report-ltr th, .report-ltr td { text-align: left !important; direction: ltr !important; }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -166,7 +193,7 @@
   // Fetch AI Report
   async function fetchAIReport() {
     const box = document.getElementById('ai-report-content');
-    box.innerHTML = `<div class="flex items-center gap-3 text-gray-400"><i class="fas fa-spinner fa-spin text-indigo-400 text-xl"></i> Artificial intelligence is currently reading files (${currentPeriod}) Writing management reports and drawing charts...</div>`;
+    box.innerHTML = `<div class="flex items-center gap-3 text-slate-500"><i class="fas fa-spinner fa-spin text-indigo-400 text-xl"></i> Artificial intelligence is currently reading files (${currentPeriod}) Writing management reports and drawing charts...</div>`;
     
     try {
       const res = await fetch(`{% url 'ai_report_api' %}?period=${currentPeriod}`);
@@ -179,20 +206,35 @@
       }
 
       if (data.text_report) {
+         // Auto-detect direction (Arabic RTL vs English LTR)
+         const arabicCount = (data.text_report.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/g) || []).length;
+         const latinCount = (data.text_report.match(/[a-zA-Z]/g) || []).length;
+         const isArabic = arabicCount > latinCount;
+         
+         if (isArabic) {
+             box.classList.add('report-rtl');
+             box.classList.remove('report-ltr');
+             box.setAttribute('dir', 'rtl');
+         } else {
+             box.classList.add('report-ltr');
+             box.classList.remove('report-rtl');
+             box.setAttribute('dir', 'ltr');
+         }
+
          let htmlContent = marked.parse(data.text_report);
          htmlContent += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">';
          
          // Add Finance Chart container
          htmlContent += `
-           <div class="bg-black/30 border border-white/5 p-4 rounded-2xl">
-             <h3 class="text-white font-bold text-lg mb-2"><i class="fas fa-coins text-green-400 mr-2"></i> Financial analysis</h3>
+           <div class="bg-black/30 border border-slate-200 p-4 rounded-2xl">
+             <h3 class="text-slate-900 font-bold text-lg mb-2"><i class="fas fa-coins text-green-400 mr-2"></i> Financial analysis</h3>
              <div class="relative h-48"><canvas id="financeAiChart"></canvas></div>
            </div>
          `;
          // Add Production Chart container
          htmlContent += `
-           <div class="bg-black/30 border border-white/5 p-4 rounded-2xl">
-             <h3 class="text-white font-bold text-lg mb-2"><i class="fas fa-industry text-blue-400 mr-2"></i> Production analysis</h3>
+           <div class="bg-black/30 border border-slate-200 p-4 rounded-2xl">
+             <h3 class="text-slate-900 font-bold text-lg mb-2"><i class="fas fa-industry text-blue-400 mr-2"></i> Production analysis</h3>
              <div class="relative h-48"><canvas id="productionAiChart"></canvas></div>
            </div>
          `;
